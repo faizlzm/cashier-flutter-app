@@ -66,16 +66,16 @@ class DashboardPage extends StatelessWidget {
     if (isCompactHeight && isLandscape) {
       // Landscape mode - use 4 columns with wider aspect ratio
       gridColumns = 4;
-      gridAspectRatio = 1.8;
+      gridAspectRatio = 2.0;
     } else if (isMobile) {
       gridColumns = 2;
-      gridAspectRatio = 1.1;
+      gridAspectRatio = 1.3;
     } else if (isTablet) {
       gridColumns = 2;
-      gridAspectRatio = 1.2;
+      gridAspectRatio = 1.4;
     } else {
       gridColumns = 4;
-      gridAspectRatio = 1.3;
+      gridAspectRatio = 1.6;
     }
 
     return SingleChildScrollView(
@@ -202,7 +202,7 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    SizedBox(height: isMobile ? 8 : 12),
                     Text(
                       s['value'] as String,
                       style: theme.textTheme.titleMedium?.copyWith(
