@@ -135,7 +135,7 @@ class SettingsPage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Aktifkan mode gelap untuk kenyamanan mata',
-                                style: TextStyle(fontSize: 13, color: cs.onSurface.withOpacity(0.6)),
+                                style: TextStyle(fontSize: 13, color: cs.onSurface.withValues(alpha: 0.6)),
                               ),
                             ],
                           ),
@@ -158,7 +158,7 @@ class SettingsPage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Aktifkan mode gelap untuk kenyamanan mata',
-                                style: TextStyle(fontSize: 13, color: cs.onSurface.withOpacity(0.6)),
+                                style: TextStyle(fontSize: 13, color: cs.onSurface.withValues(alpha: 0.6)),
                               ),
                             ],
                           ),
@@ -231,7 +231,7 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(fontSize: isMobile ? 12 : 14, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              style: TextStyle(fontSize: isMobile ? 12 : 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ],
           const SizedBox(height: 20),

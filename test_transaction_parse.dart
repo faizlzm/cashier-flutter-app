@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:convert';
 
 void main() {
@@ -31,7 +32,7 @@ void main() {
   try {
     final json = jsonDecode(jsonStr);
     print('Parsed JSON: $json');
-    
+
     // Test extracting key fields
     print('id: ${json['id']}');
     print('transactionCode: ${json['transactionCode']}');
@@ -42,7 +43,7 @@ void main() {
     print('items[0].quantity: ${json['items'][0]['quantity']}');
     print('items[0].price: ${json['items'][0]['price']}');
     print('items[0].category: ${json['items'][0]['category']}');
-    
+
     print('\n✅ All fields parsed successfully!');
   } catch (e) {
     print('❌ Error: $e');

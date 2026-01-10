@@ -188,7 +188,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     Text(
                       'Periksa pesanan sebelum bayar',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -220,7 +220,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       Icon(
                         LucideIcons.receipt,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -278,7 +278,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 Text(
                                   '${item.quantity}x @ ${formatRupiah(item.product.price)}',
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: cs.onSurface.withOpacity(0.6),
+                                    color: cs.onSurface.withValues(alpha: 0.6),
                                     fontSize: 11,
                                   ),
                                 ),
@@ -299,7 +299,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: cs.secondary.withOpacity(0.3),
+                    color: cs.secondary.withValues(alpha: 0.3),
                   ),
                   child: Column(
                     children: [
@@ -345,14 +345,14 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
             decoration: BoxDecoration(
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: cs.primary.withOpacity(0.2)),
+              border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
                 // Payment Methods
                 Container(
                   padding: const EdgeInsets.all(12),
-                  color: cs.secondary.withOpacity(0.2),
+                  color: cs.secondary.withValues(alpha: 0.2),
                   child: Row(
                     children: [
                       Expanded(
@@ -386,7 +386,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                           height: 56,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: cs.secondary.withOpacity(0.3),
+                            color: cs.secondary.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -396,7 +396,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: cs.onSurface.withOpacity(0.5),
+                                  color: cs.onSurface.withValues(alpha: 0.5),
                                 ),
                               ),
                               Expanded(
@@ -446,7 +446,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                       vertical: 6,
                                     ),
                                     side: BorderSide(
-                                      color: cs.primary.withOpacity(0.3),
+                                      color: cs.primary.withValues(alpha: 0.3),
                                     ),
                                   ),
                                   child: Text(
@@ -504,7 +504,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: cs.primary.withOpacity(0.3),
+                                color: cs.primary.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -524,7 +524,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                             'Menunggu pembayaran...',
                             style: TextStyle(
                               fontSize: 12,
-                              color: cs.onSurface.withOpacity(0.6),
+                              color: cs.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -550,13 +550,13 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 Icon(
                                   LucideIcons.wallet,
                                   size: 14,
-                                  color: cs.onSurface.withOpacity(0.6),
+                                  color: cs.onSurface.withValues(alpha: 0.6),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Kembalian',
                                   style: TextStyle(
-                                    color: cs.onSurface.withOpacity(0.6),
+                                    color: cs.onSurface.withValues(alpha: 0.6),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -569,7 +569,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 fontWeight: FontWeight.bold,
                                 color: change > 0
                                     ? Colors.green
-                                    : cs.onSurface.withOpacity(0.5),
+                                    : cs.onSurface.withValues(alpha: 0.5),
                               ),
                             ),
                           ],
@@ -652,7 +652,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       Text(
                         'Periksa detail pesanan sebelum pembayaran',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -684,7 +684,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 Icon(
                                   LucideIcons.receipt,
                                   size: 18,
-                                  color: cs.onSurface.withOpacity(0.6),
+                                  color: cs.onSurface.withValues(alpha: 0.6),
                                 ),
                                 const SizedBox(width: 8),
                                 const Text(
@@ -746,7 +746,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                           '${item.quantity}x @ ${formatRupiah(item.product.price)}',
                                           style: theme.textTheme.bodySmall
                                               ?.copyWith(
-                                                color: cs.onSurface.withOpacity(
+                                                color: cs.onSurface.withValues(alpha: 
                                                   0.6,
                                                 ),
                                               ),
@@ -769,7 +769,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: cs.secondary.withOpacity(0.3),
+                          color: cs.secondary.withValues(alpha: 0.3),
                         ),
                         child: Column(
                           children: [
@@ -819,10 +819,10 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
             decoration: BoxDecoration(
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: cs.primary.withOpacity(0.2)),
+              border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 20,
                 ),
               ],
@@ -832,9 +832,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: cs.primary.withOpacity(0.05),
+                    color: cs.primary.withValues(alpha: 0.05),
                     border: Border(
-                      bottom: BorderSide(color: cs.primary.withOpacity(0.1)),
+                      bottom: BorderSide(color: cs.primary.withValues(alpha: 0.1)),
                     ),
                   ),
                   child: Column(
@@ -845,7 +845,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
-                          color: cs.primary.withOpacity(0.6),
+                          color: cs.primary.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -862,7 +862,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(12),
-                  color: cs.secondary.withOpacity(0.2),
+                  color: cs.secondary.withValues(alpha: 0.2),
                   child: Row(
                     children: [
                       Expanded(
@@ -897,7 +897,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                   horizontal: 16,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: cs.secondary.withOpacity(0.3),
+                                  color: cs.secondary.withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -907,7 +907,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: cs.onSurface.withOpacity(0.5),
+                                        color: cs.onSurface.withValues(alpha: 0.5),
                                       ),
                                     ),
                                     Expanded(
@@ -960,7 +960,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                                     vertical: 8,
                                                   ),
                                               side: BorderSide(
-                                                color: cs.primary.withOpacity(
+                                                color: cs.primary.withValues(alpha: 
                                                   0.3,
                                                 ),
                                               ),
@@ -1018,7 +1018,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: cs.primary.withOpacity(0.3),
+                                    color: cs.primary.withValues(alpha: 0.3),
                                     width: 2,
                                   ),
                                 ),
@@ -1038,7 +1038,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 'Menunggu konfirmasi pembayaran...',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: cs.onSurface.withOpacity(0.6),
+                                  color: cs.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
@@ -1061,13 +1061,13 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 Icon(
                                   LucideIcons.wallet,
                                   size: 16,
-                                  color: cs.onSurface.withOpacity(0.6),
+                                  color: cs.onSurface.withValues(alpha: 0.6),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Kembalian',
                                   style: TextStyle(
-                                    color: cs.onSurface.withOpacity(0.6),
+                                    color: cs.onSurface.withValues(alpha: 0.6),
                                   ),
                                 ),
                               ],
@@ -1079,7 +1079,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                 fontWeight: FontWeight.bold,
                                 color: change > 0
                                     ? Colors.green
-                                    : cs.onSurface.withOpacity(0.5),
+                                    : cs.onSurface.withValues(alpha: 0.5),
                               ),
                             ),
                           ],
@@ -1132,7 +1132,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         Text(
           label,
           style: TextStyle(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 12,
           ),
         ),
@@ -1157,7 +1157,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           color: isActive ? Theme.of(context).cardColor : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isActive ? cs.primary.withOpacity(0.2) : Colors.transparent,
+            color: isActive ? cs.primary.withValues(alpha: 0.2) : Colors.transparent,
             width: 2,
           ),
         ),
@@ -1167,14 +1167,14 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
             Icon(
               icon,
               size: 18,
-              color: isActive ? cs.primary : cs.onSurface.withOpacity(0.6),
+              color: isActive ? cs.primary : cs.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isActive ? cs.primary : cs.onSurface.withOpacity(0.6),
+                color: isActive ? cs.primary : cs.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -1188,7 +1188,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     final isBackspace = value == 'backspace';
     return Material(
       color: isBackspace
-          ? Colors.red.withOpacity(0.1)
+          ? Colors.red.withValues(alpha: 0.1)
           : Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
@@ -1199,7 +1199,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isBackspace
-                  ? Colors.red.withOpacity(0.3)
+                  ? Colors.red.withValues(alpha: 0.3)
                   : Theme.of(context).dividerColor,
             ),
           ),

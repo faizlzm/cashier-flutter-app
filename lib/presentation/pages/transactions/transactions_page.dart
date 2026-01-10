@@ -89,7 +89,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                           prefixIcon: Icon(
                             LucideIcons.search,
                             size: 18,
-                            color: cs.onSurface.withOpacity(0.4),
+                            color: cs.onSurface.withValues(alpha: 0.4),
                           ),
                           onChanged: (v) => setState(() => _search = v),
                         ),
@@ -99,7 +99,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         onPressed: () {},
                         icon: Icon(
                           LucideIcons.filter,
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
@@ -126,7 +126,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                       Text(
                         'Pantau semua pemasukan dan detail transaksi toko Anda',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -140,7 +140,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                           prefixIcon: Icon(
                             LucideIcons.search,
                             size: 18,
-                            color: cs.onSurface.withOpacity(0.4),
+                            color: cs.onSurface.withValues(alpha: 0.4),
                           ),
                           onChanged: (v) => setState(() => _search = v),
                         ),
@@ -150,7 +150,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         onPressed: () {},
                         icon: Icon(
                           LucideIcons.calendar,
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
@@ -162,7 +162,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         onPressed: () {},
                         icon: Icon(
                           LucideIcons.filter,
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
@@ -247,7 +247,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                           '${trx.items.length} item',
                           style: TextStyle(
                             fontSize: 12,
-                            color: cs.onSurface.withOpacity(0.5),
+                            color: cs.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -266,7 +266,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: cs.secondary.withOpacity(0.2),
+                  color: cs.secondary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -280,7 +280,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: cs.secondary.withOpacity(0.5),
+                            color: cs.secondary.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -288,7 +288,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                             style: TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 11,
-                              color: cs.onSurface.withOpacity(0.7),
+                              color: cs.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                         ),
@@ -297,7 +297,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                           '${formatDateShort(trx.date)} • ${formatTime(trx.date)}',
                           style: TextStyle(
                             fontSize: 11,
-                            color: cs.onSurface.withOpacity(0.5),
+                            color: cs.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -318,7 +318,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                           text: 'Lunas',
                           backgroundColor: AppColors.greenBg,
                           textColor: AppColors.green,
-                          borderColor: AppColors.green.withOpacity(0.3),
+                          borderColor: AppColors.green.withValues(alpha: 0.3),
                         ),
                       ],
                     ),
@@ -345,7 +345,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             decoration: BoxDecoration(
-              color: cs.secondary.withOpacity(0.3),
+              color: cs.secondary.withValues(alpha: 0.3),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
@@ -358,7 +358,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     'ID',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -368,7 +368,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     'Waktu',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -377,7 +377,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     'Detail Pesanan',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -387,7 +387,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     'Metode',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -397,7 +397,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     'Status',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -408,7 +408,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -435,7 +435,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: theme.dividerColor.withOpacity(0.5),
+                              color: theme.dividerColor.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -449,7 +449,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: cs.secondary.withOpacity(0.5),
+                                  color: cs.secondary.withValues(alpha: 0.5),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -457,7 +457,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                   style: TextStyle(
                                     fontFamily: 'monospace',
                                     fontSize: 12,
-                                    color: cs.onSurface.withOpacity(0.7),
+                                    color: cs.onSurface.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ),
@@ -477,7 +477,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                     formatTime(trx.date),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: cs.onSurface.withOpacity(0.5),
+                                      color: cs.onSurface.withValues(alpha: 0.5),
                                     ),
                                   ),
                                 ],
@@ -524,7 +524,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                           '${trx.items.length} item • ${primary.category == 'FOOD' ? 'Makanan' : 'Minuman'}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: cs.onSurface.withOpacity(
+                                            color: cs.onSurface.withValues(alpha: 
                                               0.5,
                                             ),
                                           ),
@@ -566,7 +566,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                     : trx.status,
                                 backgroundColor: AppColors.greenBg,
                                 textColor: AppColors.green,
-                                borderColor: AppColors.green.withOpacity(0.3),
+                                borderColor: AppColors.green.withValues(alpha: 0.3),
                               ),
                             ),
                             SizedBox(
@@ -600,7 +600,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                   'Menampilkan ${filtered.length} transaksi',
                   style: TextStyle(
                     fontSize: 12,
-                    color: cs.onSurface.withOpacity(0.6),
+                    color: cs.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 Row(
@@ -609,14 +609,14 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                       onPressed: null,
                       child: Text(
                         'Sebelumnya',
-                        style: TextStyle(color: cs.onSurface.withOpacity(0.4)),
+                        style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
                       ),
                     ),
                     TextButton(
                       onPressed: null,
                       child: Text(
                         'Selanjutnya',
-                        style: TextStyle(color: cs.onSurface.withOpacity(0.4)),
+                        style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
                       ),
                     ),
                   ],
@@ -643,13 +643,13 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
             ),
             child: Icon(
               LucideIcons.archive,
-              color: cs.onSurface.withOpacity(0.5),
+              color: cs.onSurface.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'Tidak ada transaksi ditemukan',
-            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
           ),
         ],
       ),

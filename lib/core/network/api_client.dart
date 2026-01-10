@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:dio/dio.dart';
 import '../config/app_config.dart';
 import '../services/token_storage.dart';
@@ -48,7 +49,7 @@ class ApiClient {
         LogInterceptor(
           requestBody: true,
           responseBody: true,
-          logPrint: (obj) => print('[API] $obj'),
+          logPrint: (obj) => debugPrint('[API] $obj'),
         ),
       );
       return true;

@@ -1,6 +1,7 @@
 /// Integration test for API connectivity
 /// Run with: flutter test integration_test/api_health_test.dart
 /// Note: Requires the API server to be running on localhost:3001
+// ignore_for_file: avoid_print
 library;
 
 import 'package:flutter_test/flutter_test.dart';

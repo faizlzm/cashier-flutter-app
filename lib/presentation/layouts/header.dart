@@ -55,7 +55,7 @@ class Header extends StatelessWidget {
                   Text(
                     'Shift: ',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   Text(

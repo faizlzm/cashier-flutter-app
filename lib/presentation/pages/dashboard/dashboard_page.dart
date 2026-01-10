@@ -125,7 +125,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           Icon(
                             LucideIcons.clock,
                             size: 14,
-                            color: cs.onSurface.withOpacity(0.6),
+                            color: cs.onSurface.withValues(alpha: 0.6),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -155,7 +155,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         Text(
                           'Ringkasan aktivitas bisnis Anda hari ini',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: cs.onSurface.withOpacity(0.6),
+                            color: cs.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -175,7 +175,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           Icon(
                             LucideIcons.clock,
                             size: 16,
-                            color: cs.onSurface.withOpacity(0.6),
+                            color: cs.onSurface.withValues(alpha: 0.6),
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -221,7 +221,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           child: Text(
                             s['label'] as String,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: cs.onSurface.withOpacity(0.6),
+                              color: cs.onSurface.withValues(alpha: 0.6),
                               fontSize: isMobile ? 10 : 12,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -263,7 +263,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           child: Text(
                             s['trend'] as String,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: cs.onSurface.withOpacity(0.6),
+                              color: cs.onSurface.withValues(alpha: 0.6),
                               fontSize: isMobile ? 9 : 10,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -340,7 +340,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: cs.primary.withOpacity(0.3),
+              color: cs.primary.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -355,7 +355,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -366,7 +366,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
                 Icon(
                   LucideIcons.arrowRight,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -383,7 +383,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             Text(
               'Masuk ke halaman Point of Sale',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: context.isMobile ? 12 : 14,
               ),
             ),
@@ -414,7 +414,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               Icon(
                 LucideIcons.clock,
                 size: 16,
-                color: cs.onSurface.withOpacity(0.6),
+                color: cs.onSurface.withValues(alpha: 0.6),
               ),
               const SizedBox(width: 8),
               Text(
@@ -488,7 +488,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     Icon(
                       LucideIcons.receipt,
                       size: 18,
-                      color: cs.onSurface.withOpacity(0.6),
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -507,14 +507,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         'Lihat Semua',
                         style: TextStyle(
                           fontSize: 12,
-                          color: cs.onSurface.withOpacity(0.6),
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(width: 4),
                       Icon(
                         LucideIcons.arrowRight,
                         size: 14,
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                     ],
                   ),
@@ -529,7 +529,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 child: Text(
                   'Belum ada transaksi hari ini',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: cs.onSurface.withOpacity(0.5),
+                    color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -546,7 +546,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: theme.dividerColor.withOpacity(0.5),
+                          color: theme.dividerColor.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -556,7 +556,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                           width: isMobile ? 32 : 40,
                           height: isMobile ? 32 : 40,
                           decoration: BoxDecoration(
-                            color: cs.primary.withOpacity(0.1),
+                            color: cs.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(
@@ -591,7 +591,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                               Text(
                                 '${trx.transactionCode} • ${formatTime(trx.createdAt)}',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: cs.onSurface.withOpacity(0.5),
+                                  color: cs.onSurface.withValues(alpha: 0.5),
                                   fontFamily: 'monospace',
                                   fontSize: isMobile ? 9 : 11,
                                 ),
@@ -614,7 +614,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                               text: 'Lunas',
                               backgroundColor: AppColors.greenBg,
                               textColor: AppColors.green,
-                              borderColor: AppColors.green.withOpacity(0.3),
+                              borderColor: AppColors.green.withValues(
+                                alpha: 0.3,
+                              ),
                             ),
                           ],
                         ),
@@ -640,7 +642,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return Container(
       padding: EdgeInsets.all(isMobile ? 10 : 12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondary.withOpacity(0.3),
+        color: theme.colorScheme.secondary.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -660,7 +662,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: isMobile ? 10 : 11,
                 ),
               ),

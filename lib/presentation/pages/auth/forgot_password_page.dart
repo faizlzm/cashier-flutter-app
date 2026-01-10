@@ -19,7 +19,10 @@ class ForgotPasswordPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [cs.primary.withOpacity(0.1), theme.scaffoldBackgroundColor],
+            colors: [
+              cs.primary.withValues(alpha: 0.1),
+              theme.scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: Center(
@@ -37,10 +40,14 @@ class ForgotPasswordPage extends StatelessWidget {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: cs.primary.withOpacity(0.1),
+                        color: cs.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(LucideIcons.keyRound, size: 24, color: cs.primary),
+                      child: Icon(
+                        LucideIcons.keyRound,
+                        size: 24,
+                        color: cs.primary,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Text(
@@ -53,7 +60,7 @@ class ForgotPasswordPage extends StatelessWidget {
                     Text(
                       'Masukkan email Anda untuk menerima link reset password',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -64,7 +71,7 @@ class ForgotPasswordPage extends StatelessWidget {
                       prefixIcon: Icon(
                         LucideIcons.mail,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -79,7 +86,9 @@ class ForgotPasswordPage extends StatelessWidget {
                       onPressed: () => context.go('/login'),
                       child: Text(
                         'Kembali ke Login',
-                        style: theme.textTheme.bodySmall?.copyWith(color: cs.primary),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: cs.primary,
+                        ),
                       ),
                     ),
                   ],
@@ -92,4 +101,3 @@ class ForgotPasswordPage extends StatelessWidget {
     );
   }
 }
-

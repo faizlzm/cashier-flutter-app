@@ -82,7 +82,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              cs.primary.withOpacity(0.1),
+              cs.primary.withValues(alpha: 0.1),
               theme.scaffoldBackgroundColor,
             ],
           ),
@@ -120,9 +120,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: cs.error.withOpacity(0.1),
+        color: cs.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: cs.error.withOpacity(0.3)),
+        border: Border.all(color: cs.error.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -157,7 +157,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: cs.primary.withOpacity(0.1),
+                  color: cs.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(LucideIcons.lock, size: 20, color: cs.primary),
@@ -174,7 +174,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Text(
                 'Kasir Pro - Solusi Modern',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: cs.onSurface.withOpacity(0.6),
+                  color: cs.onSurface.withValues(alpha: 0.6),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -195,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 prefixIcon: Icon(
                   LucideIcons.mail,
                   size: 16,
-                  color: cs.onSurface.withOpacity(0.4),
+                  color: cs.onSurface.withValues(alpha: 0.4),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 enabled: !isLoading,
@@ -208,7 +208,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 prefixIcon: Icon(
                   LucideIcons.lock,
                   size: 16,
-                  color: cs.onSurface.withOpacity(0.4),
+                  color: cs.onSurface.withValues(alpha: 0.4),
                 ),
                 enabled: !isLoading,
                 onSubmitted: (_) => _handleLogin(),
@@ -236,7 +236,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     child: Text(
                       'Lupa Password?',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
                     ),
@@ -275,7 +275,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: cs.primary.withOpacity(0.1),
+            color: cs.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(LucideIcons.lock, size: 24, color: cs.primary),
@@ -291,7 +291,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         Text(
           'Solusi Kasir Modern untuk Bisnis Anda',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: cs.onSurface.withOpacity(0.6),
+            color: cs.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),
@@ -303,7 +303,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           prefixIcon: Icon(
             LucideIcons.mail,
             size: 18,
-            color: cs.onSurface.withOpacity(0.4),
+            color: cs.onSurface.withValues(alpha: 0.4),
           ),
           keyboardType: TextInputType.emailAddress,
           enabled: !isLoading,
@@ -316,7 +316,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           prefixIcon: Icon(
             LucideIcons.lock,
             size: 18,
-            color: cs.onSurface.withOpacity(0.4),
+            color: cs.onSurface.withValues(alpha: 0.4),
           ),
           enabled: !isLoading,
           onSubmitted: (_) => _handleLogin(),
@@ -340,7 +340,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Text(
                 'Lupa Password?',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: cs.onSurface.withOpacity(0.6),
+                  color: cs.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),

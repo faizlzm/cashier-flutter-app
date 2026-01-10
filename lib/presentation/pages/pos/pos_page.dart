@@ -73,9 +73,9 @@ class _PosPageState extends ConsumerState<PosPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
-          color: Colors.orange.withOpacity(0.1),
+          color: Colors.orange.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.orange.withOpacity(0.3)),
+          border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                           prefixIcon: Icon(
                             LucideIcons.search,
                             size: 18,
-                            color: cs.onSurface.withOpacity(0.4),
+                            color: cs.onSurface.withValues(alpha: 0.4),
                           ),
                           onChanged: (v) => setState(() => _search = v),
                         ),
@@ -177,7 +177,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: cs.primary.withOpacity(0.3),
+                        color: cs.primary.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -239,7 +239,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       prefixIcon: Icon(
                         LucideIcons.search,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                       onChanged: (v) => setState(() => _search = v),
                     ),
@@ -315,7 +315,7 @@ class _PosPageState extends ConsumerState<PosPage> {
           const SizedBox(height: 16),
           Text(
             'Memuat produk...',
-            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
           ),
         ],
       ),
@@ -330,12 +330,12 @@ class _PosPageState extends ConsumerState<PosPage> {
           Icon(
             LucideIcons.alertCircle,
             size: 48,
-            color: cs.error.withOpacity(0.5),
+            color: cs.error.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             error,
-            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -356,14 +356,14 @@ class _PosPageState extends ConsumerState<PosPage> {
           Icon(
             LucideIcons.package,
             size: 48,
-            color: cs.onSurface.withOpacity(0.2),
+            color: cs.onSurface.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 16),
           Text(
             _search.isNotEmpty
                 ? 'Tidak ditemukan produk untuk "$_search"'
                 : 'Belum ada produk',
-            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
           ),
         ],
       ),
@@ -440,7 +440,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.1),
+                                  color: Colors.orange.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -458,7 +458,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: cs.error.withOpacity(0.1),
+                                  color: cs.error.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -486,14 +486,14 @@ class _PosPageState extends ConsumerState<PosPage> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: isOutOfStock
-                          ? cs.onSurface.withOpacity(0.2)
+                          ? cs.onSurface.withValues(alpha: 0.2)
                           : cs.primary,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       LucideIcons.plus,
                       color: isOutOfStock
-                          ? cs.onSurface.withOpacity(0.5)
+                          ? cs.onSurface.withValues(alpha: 0.5)
                           : Colors.white,
                     ),
                   ),
@@ -538,7 +538,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       height: 4,
                       margin: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: cs.onSurface.withOpacity(0.2),
+                        color: cs.onSurface.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -550,7 +550,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: cs.secondary.withOpacity(0.3),
+                        color: cs.secondary.withValues(alpha: 0.3),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -637,7 +637,7 @@ class _PosPageState extends ConsumerState<PosPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: cs.secondary.withOpacity(0.3),
+              color: cs.secondary.withValues(alpha: 0.3),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
@@ -693,12 +693,12 @@ class _PosPageState extends ConsumerState<PosPage> {
           Icon(
             LucideIcons.shoppingCart,
             size: 48,
-            color: cs.onSurface.withOpacity(0.2),
+            color: cs.onSurface.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 8),
           Text(
             'Keranjang kosong',
-            style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.5)),
           ),
         ],
       ),
@@ -800,7 +800,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                 child: Icon(
                   LucideIcons.trash2,
                   size: 16,
-                  color: cs.error.withOpacity(0.5),
+                  color: cs.error.withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -819,7 +819,7 @@ class _PosPageState extends ConsumerState<PosPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: cs.secondary.withOpacity(0.3),
+        color: cs.secondary.withValues(alpha: 0.3),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
       ),
       child: Column(
@@ -890,7 +890,7 @@ class _PosPageState extends ConsumerState<PosPage> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         Text(value, style: theme.textTheme.bodyMedium),

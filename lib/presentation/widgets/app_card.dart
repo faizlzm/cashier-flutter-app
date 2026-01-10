@@ -21,14 +21,16 @@ class AppCard extends StatelessWidget {
     Widget card = Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: glass ? theme.cardColor.withOpacity(0.5) : theme.cardColor,
+        color: glass ? theme.cardColor.withValues(alpha: 0.5) : theme.cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: glass ? Colors.white.withOpacity(0.2) : theme.dividerColor,
+          color: glass
+              ? Colors.white.withValues(alpha: 0.2)
+              : theme.dividerColor,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -40,4 +42,3 @@ class AppCard extends StatelessWidget {
     return onTap != null ? GestureDetector(onTap: onTap, child: card) : card;
   }
 }
-

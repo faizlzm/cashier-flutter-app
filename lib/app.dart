@@ -55,7 +55,7 @@ class _SplashScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              cs.primary.withOpacity(0.1),
+              cs.primary.withValues(alpha: 0.1),
               theme.scaffoldBackgroundColor,
             ],
           ),
@@ -68,7 +68,7 @@ class _SplashScreen extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: cs.primary.withOpacity(0.1),
+                  color: cs.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

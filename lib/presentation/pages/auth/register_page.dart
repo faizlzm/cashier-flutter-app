@@ -98,7 +98,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              cs.primary.withOpacity(0.1),
+              cs.primary.withValues(alpha: 0.1),
               theme.scaffoldBackgroundColor,
             ],
           ),
@@ -118,7 +118,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: cs.primary.withOpacity(0.1),
+                        color: cs.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -138,7 +138,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     Text(
                       'Buat akun untuk mulai menggunakan Kasir Pro',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: cs.onSurface.withOpacity(0.6),
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -151,9 +151,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         padding: const EdgeInsets.all(12),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: cs.error.withOpacity(0.1),
+                          color: cs.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: cs.error.withOpacity(0.3)),
+                          border: Border.all(
+                            color: cs.error.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -179,7 +181,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       prefixIcon: Icon(
                         LucideIcons.user,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                       enabled: !isLoading,
                     ),
@@ -191,7 +193,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       prefixIcon: Icon(
                         LucideIcons.mail,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                       enabled: !isLoading,
                     ),
@@ -203,7 +205,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       prefixIcon: Icon(
                         LucideIcons.lock,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                       enabled: !isLoading,
                     ),
@@ -215,7 +217,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       prefixIcon: Icon(
                         LucideIcons.lock,
                         size: 18,
-                        color: cs.onSurface.withOpacity(0.4),
+                        color: cs.onSurface.withValues(alpha: 0.4),
                       ),
                       enabled: !isLoading,
                       onSubmitted: (_) => _handleRegister(),
