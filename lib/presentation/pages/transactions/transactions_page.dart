@@ -1,31 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/utils/responsive_utils.dart';
-import '../../../data/repositories/transaction_repository.dart';
+import '../../../providers/transaction_provider.dart';
 import '../../widgets/app_input.dart';
 import '../../widgets/app_badge.dart';
 
-class TransactionsPage extends StatefulWidget {
+class TransactionsPage extends ConsumerStatefulWidget {
   const TransactionsPage({super.key});
 
   @override
-  State<TransactionsPage> createState() => _TransactionsPageState();
+  ConsumerState<TransactionsPage> createState() => _TransactionsPageState();
 }
 
-class _TransactionsPageState extends State<TransactionsPage> {
+class _TransactionsPageState extends ConsumerState<TransactionsPage> {
   String _search = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(transactionsProvider.notifier).loadTransactions();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final allTrx = TransactionRepository().getAll();
-    final filtered = allTrx
-        .where((t) => t.id.toLowerCase().contains(_search.toLowerCase()))
-        .toList();
+    final state = ref.watch(transactionsProvider);
     final isMobile = context.isMobile;
+
+    // Show loading state
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Show error state
+    if (state.error != null && state.transactions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(LucideIcons.alertCircle, size: 48, color: cs.error),
+            const SizedBox(height: 16),
+            Text(state.error!, style: TextStyle(color: cs.error)),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () =>
+                  ref.read(transactionsProvider.notifier).loadTransactions(),
+              child: const Text('Coba Lagi'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Filter transactions by search
+    final allTrx = state.transactions;
+    final filtered = allTrx.where((t) {
+      final searchLower = _search.toLowerCase();
+      return t.transactionCode.toLowerCase().contains(searchLower) ||
+          t.id.toLowerCase().contains(searchLower);
+    }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +97,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () {},
-                        icon: Icon(LucideIcons.filter, color: cs.onSurface.withOpacity(0.6)),
+                        icon: Icon(
+                          LucideIcons.filter,
+                          color: cs.onSurface.withOpacity(0.6),
+                        ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
                           side: BorderSide(color: theme.dividerColor),
@@ -106,7 +148,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () {},
-                        icon: Icon(LucideIcons.calendar, color: cs.onSurface.withOpacity(0.6)),
+                        icon: Icon(
+                          LucideIcons.calendar,
+                          color: cs.onSurface.withOpacity(0.6),
+                        ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
                           side: BorderSide(color: theme.dividerColor),
@@ -115,7 +160,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () {},
-                        icon: Icon(LucideIcons.filter, color: cs.onSurface.withOpacity(0.6)),
+                        icon: Icon(
+                          LucideIcons.filter,
+                          color: cs.onSurface.withOpacity(0.6),
+                        ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
                           side: BorderSide(color: theme.dividerColor),
@@ -127,11 +175,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
               ),
         const SizedBox(height: 24),
 
-        // Content - table for desktop, cards for mobile
+        // Content - table for desktop, cards for mobile with pull-to-refresh
         Expanded(
-          child: isMobile
-              ? _buildMobileList(theme, cs, filtered)
-              : _buildDesktopTable(theme, cs, filtered),
+          child: RefreshIndicator(
+            onRefresh: () => ref.read(transactionsProvider.notifier).refresh(),
+            child: isMobile
+                ? _buildMobileList(theme, cs, filtered)
+                : _buildDesktopTable(theme, cs, filtered),
+          ),
         ),
       ],
     );
@@ -147,9 +198,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
       itemBuilder: (_, i) {
         final trx = filtered[i];
         final primary = trx.items.first;
-        final bg = getColorFromString(primary.name);
-        final txt = getTextColorFromString(primary.name);
-        
+        final bg = getColorFromString(primary.productName);
+        final txt = getTextColorFromString(primary.productName);
+
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(12),
@@ -172,7 +223,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     ),
                     child: Center(
                       child: Text(
-                        getInitials(primary.name),
+                        getInitials(primary.productName),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -187,7 +238,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          trx.items.map((i) => i.name).join(', '),
+                          trx.items.map((i) => i.productName).join(', '),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w600),
@@ -224,7 +275,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: cs.secondary.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(4),
@@ -251,9 +305,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     Row(
                       children: [
                         Icon(
-                          trx.paymentMethod == 'CASH' ? LucideIcons.banknote : LucideIcons.creditCard,
+                          trx.paymentMethod == 'CASH'
+                              ? LucideIcons.banknote
+                              : LucideIcons.creditCard,
                           size: 14,
-                          color: trx.paymentMethod == 'CASH' ? AppColors.green : AppColors.blue,
+                          color: trx.paymentMethod == 'CASH'
+                              ? AppColors.green
+                              : AppColors.blue,
                         ),
                         const SizedBox(width: 8),
                         AppBadge(
@@ -288,7 +346,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             decoration: BoxDecoration(
               color: cs.secondary.withOpacity(0.3),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
             ),
             child: Row(
               children: [
@@ -365,8 +425,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
                     itemBuilder: (_, i) {
                       final trx = filtered[i];
                       final primary = trx.items.first;
-                      final bg = getColorFromString(primary.name);
-                      final txt = getTextColorFromString(primary.name);
+                      final bg = getColorFromString(primary.productName);
+                      final txt = getTextColorFromString(primary.productName);
                       return Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -409,7 +469,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                 children: [
                                   Text(
                                     formatDateShort(trx.date),
-                                    style: const TextStyle(fontWeight: FontWeight.w500),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   Text(
                                     formatTime(trx.date),
@@ -433,7 +495,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        getInitials(primary.name),
+                                        getInitials(primary.productName),
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
@@ -445,10 +507,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          trx.items.map((i) => i.name).join(', '),
+                                          trx.items
+                                              .map((i) => i.productName)
+                                              .join(', '),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -459,7 +524,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                           '${trx.items.length} item • ${primary.category == 'FOOD' ? 'Makanan' : 'Minuman'}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: cs.onSurface.withOpacity(0.5),
+                                            color: cs.onSurface.withOpacity(
+                                              0.5,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -484,7 +551,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   const SizedBox(width: 8),
                                   Text(
                                     trx.paymentMethod,
-                                    style: const TextStyle(fontWeight: FontWeight.w500),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -492,7 +561,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             SizedBox(
                               width: 80,
                               child: AppBadge(
-                                text: trx.status == 'PAID' ? 'Lunas' : trx.status,
+                                text: trx.status == 'PAID'
+                                    ? 'Lunas'
+                                    : trx.status,
                                 backgroundColor: AppColors.greenBg,
                                 textColor: AppColors.green,
                                 borderColor: AppColors.green.withOpacity(0.3),

@@ -4,8 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/utils/responsive_utils.dart';
-import '../../../data/repositories/product_repository.dart';
+import '../../../data/models/product_model.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../providers/product_provider.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_input.dart';
 import '../../widgets/app_badge.dart';
@@ -26,20 +27,69 @@ class _PosPageState extends ConsumerState<PosPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final allProducts = ProductRepository().getAll();
+    final productsState = ref.watch(productsProvider);
     final cart = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
     final isMobile = context.isMobile;
 
-    final filteredProducts = allProducts.where((p) {
+    // Filter products locally for instant response
+    final filteredProducts = productsState.products.where((p) {
       final matchSearch = p.name.toLowerCase().contains(_search.toLowerCase());
       final matchCat = _category == 'ALL' || p.category == _category;
       return matchSearch && matchCat;
-    }).toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+    }).toList()..sort((a, b) => a.name.compareTo(b.name));
 
     // In landscape mode, we have more width so use desktop-style layout
     final useMobileLayout = isMobile && !context.isLandscape;
+
+    // Main content with loading/error handling
+    Widget buildProductContent() {
+      if (productsState.isLoading && productsState.products.isEmpty) {
+        return _buildLoadingState(cs);
+      }
+
+      if (productsState.error != null && productsState.products.isEmpty) {
+        return _buildErrorState(cs, productsState.error!);
+      }
+
+      if (filteredProducts.isEmpty) {
+        return _buildEmptyState(cs);
+      }
+
+      return RefreshIndicator(
+        onRefresh: () => ref.read(productsProvider.notifier).refresh(),
+        child: ListView.builder(
+          itemCount: filteredProducts.length,
+          itemBuilder: (_, i) =>
+              _buildProductItem(filteredProducts[i], theme, cs, cartNotifier),
+        ),
+      );
+    }
+
+    // Show offline indicator if using cached data
+    Widget buildOfflineIndicator() {
+      if (!productsState.isFromCache) return const SizedBox.shrink();
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: Colors.orange.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.wifiOff, size: 14, color: Colors.orange[700]),
+            const SizedBox(width: 6),
+            Text(
+              'Mode offline - data dari cache',
+              style: TextStyle(fontSize: 12, color: Colors.orange[700]),
+            ),
+          ],
+        ),
+      );
+    }
 
     // Mobile portrait layout
     if (useMobileLayout) {
@@ -47,6 +97,9 @@ class _PosPageState extends ConsumerState<PosPage> {
         children: [
           Column(
             children: [
+              // Offline indicator
+              buildOfflineIndicator(),
+
               // Search & Filter - scrollable horizontal
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -69,21 +122,27 @@ class _PosPageState extends ConsumerState<PosPage> {
                       const SizedBox(width: 8),
                       AppButton(
                         text: 'Semua',
-                        variant: _category == 'ALL' ? BtnVariant.primary : BtnVariant.outline,
+                        variant: _category == 'ALL'
+                            ? BtnVariant.primary
+                            : BtnVariant.outline,
                         size: BtnSize.sm,
                         onPressed: () => setState(() => _category = 'ALL'),
                       ),
                       const SizedBox(width: 8),
                       AppButton(
                         text: 'Makanan',
-                        variant: _category == 'FOOD' ? BtnVariant.primary : BtnVariant.outline,
+                        variant: _category == 'FOOD'
+                            ? BtnVariant.primary
+                            : BtnVariant.outline,
                         size: BtnSize.sm,
                         onPressed: () => setState(() => _category = 'FOOD'),
                       ),
                       const SizedBox(width: 8),
                       AppButton(
                         text: 'Minuman',
-                        variant: _category == 'DRINK' ? BtnVariant.primary : BtnVariant.outline,
+                        variant: _category == 'DRINK'
+                            ? BtnVariant.primary
+                            : BtnVariant.outline,
                         size: BtnSize.sm,
                         onPressed: () => setState(() => _category = 'DRINK'),
                       ),
@@ -93,18 +152,13 @@ class _PosPageState extends ConsumerState<PosPage> {
               ),
 
               // Product List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (_, i) => _buildProductItem(filteredProducts[i], theme, cs, cartNotifier),
-                ),
-              ),
-              
+              Expanded(child: buildProductContent()),
+
               // Bottom spacing for cart FAB
               const SizedBox(height: 80),
             ],
           ),
-          
+
           // Floating Cart Button
           Positioned(
             bottom: 16,
@@ -114,7 +168,10 @@ class _PosPageState extends ConsumerState<PosPage> {
               child: GestureDetector(
                 onTap: () => setState(() => _showCart = true),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: cs.primary,
                     borderRadius: BorderRadius.circular(30),
@@ -129,7 +186,11 @@ class _PosPageState extends ConsumerState<PosPage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.shoppingCart, color: Colors.white, size: 20),
+                      const Icon(
+                        LucideIcons.shoppingCart,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Keranjang (${cartNotifier.itemCount})',
@@ -152,10 +213,9 @@ class _PosPageState extends ConsumerState<PosPage> {
               ),
             ),
           ),
-          
+
           // Cart Bottom Sheet
-          if (_showCart)
-            _buildMobileCartSheet(theme, cs, cart, cartNotifier),
+          if (_showCart) _buildMobileCartSheet(theme, cs, cart, cartNotifier),
         ],
       );
     }
@@ -167,6 +227,9 @@ class _PosPageState extends ConsumerState<PosPage> {
         Expanded(
           child: Column(
             children: [
+              // Offline indicator
+              buildOfflineIndicator(),
+
               // Search & Filter
               Row(
                 children: [
@@ -184,32 +247,54 @@ class _PosPageState extends ConsumerState<PosPage> {
                   const SizedBox(width: 16),
                   AppButton(
                     text: 'Semua',
-                    variant: _category == 'ALL' ? BtnVariant.primary : BtnVariant.outline,
+                    variant: _category == 'ALL'
+                        ? BtnVariant.primary
+                        : BtnVariant.outline,
                     onPressed: () => setState(() => _category = 'ALL'),
                   ),
                   const SizedBox(width: 8),
                   AppButton(
                     text: 'Makanan',
-                    variant: _category == 'FOOD' ? BtnVariant.primary : BtnVariant.outline,
+                    variant: _category == 'FOOD'
+                        ? BtnVariant.primary
+                        : BtnVariant.outline,
                     onPressed: () => setState(() => _category = 'FOOD'),
                   ),
                   const SizedBox(width: 8),
                   AppButton(
                     text: 'Minuman',
-                    variant: _category == 'DRINK' ? BtnVariant.primary : BtnVariant.outline,
+                    variant: _category == 'DRINK'
+                        ? BtnVariant.primary
+                        : BtnVariant.outline,
                     onPressed: () => setState(() => _category = 'DRINK'),
+                  ),
+                  const SizedBox(width: 8),
+                  // Refresh button
+                  IconButton(
+                    icon: productsState.isRefreshing
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: cs.primary,
+                            ),
+                          )
+                        : Icon(
+                            LucideIcons.refreshCw,
+                            size: 18,
+                            color: cs.primary,
+                          ),
+                    onPressed: productsState.isRefreshing
+                        ? null
+                        : () => ref.read(productsProvider.notifier).refresh(),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
 
               // Product List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (_, i) => _buildProductItem(filteredProducts[i], theme, cs, cartNotifier),
-                ),
-              ),
+              Expanded(child: buildProductContent()),
             ],
           ),
         ),
@@ -221,9 +306,80 @@ class _PosPageState extends ConsumerState<PosPage> {
     );
   }
 
-  Widget _buildProductItem(dynamic p, ThemeData theme, ColorScheme cs, CartNotifier cartNotifier) {
+  Widget _buildLoadingState(ColorScheme cs) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(color: cs.primary),
+          const SizedBox(height: 16),
+          Text(
+            'Memuat produk...',
+            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(ColorScheme cs, String error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            LucideIcons.alertCircle,
+            size: 48,
+            color: cs.error.withOpacity(0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            error,
+            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          AppButton(
+            text: 'Coba Lagi',
+            onPressed: () => ref.read(productsProvider.notifier).loadProducts(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(ColorScheme cs) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            LucideIcons.package,
+            size: 48,
+            color: cs.onSurface.withOpacity(0.2),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _search.isNotEmpty
+                ? 'Tidak ditemukan produk untuk "$_search"'
+                : 'Belum ada produk',
+            style: TextStyle(color: cs.onSurface.withOpacity(0.6)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductItem(
+    Product p,
+    ThemeData theme,
+    ColorScheme cs,
+    CartNotifier cartNotifier,
+  ) {
     final bgColor = getColorFromString(p.name);
     final txtColor = getTextColorFromString(p.name);
+    final isOutOfStock = p.isOutOfStock;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -235,62 +391,114 @@ class _PosPageState extends ConsumerState<PosPage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => cartNotifier.addItem(p),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      getInitials(p.name),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: txtColor,
+          onTap: isOutOfStock ? null : () => cartNotifier.addItem(p),
+          child: Opacity(
+            opacity: isOutOfStock ? 0.5 : 1.0,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        getInitials(p.name),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: txtColor,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        p.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                p.name,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (p.isLowStock && !isOutOfStock)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Stok: ${p.stock}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
+                            if (isOutOfStock)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: cs.error.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Habis',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: cs.error,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        formatRupiah(p.price),
-                        style: TextStyle(
-                          color: cs.primary,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          formatRupiah(p.price),
+                          style: TextStyle(
+                            color: cs.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: cs.primary,
-                    shape: BoxShape.circle,
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isOutOfStock
+                          ? cs.onSurface.withOpacity(0.2)
+                          : cs.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      LucideIcons.plus,
+                      color: isOutOfStock
+                          ? cs.onSurface.withOpacity(0.5)
+                          : Colors.white,
+                    ),
                   ),
-                  child: const Icon(LucideIcons.plus, color: Colors.white),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -298,7 +506,12 @@ class _PosPageState extends ConsumerState<PosPage> {
     );
   }
 
-  Widget _buildMobileCartSheet(ThemeData theme, ColorScheme cs, List cart, CartNotifier cartNotifier) {
+  Widget _buildMobileCartSheet(
+    ThemeData theme,
+    ColorScheme cs,
+    List cart,
+    CartNotifier cartNotifier,
+  ) {
     return GestureDetector(
       onTap: () => setState(() => _showCart = false),
       child: Container(
@@ -313,7 +526,9 @@ class _PosPageState extends ConsumerState<PosPage> {
               return Container(
                 decoration: BoxDecoration(
                   color: theme.cardColor,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -327,10 +542,13 @@ class _PosPageState extends ConsumerState<PosPage> {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    
+
                     // Cart Header
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: cs.secondary.withOpacity(0.3),
                       ),
@@ -353,12 +571,17 @@ class _PosPageState extends ConsumerState<PosPage> {
                             children: [
                               if (cart.isNotEmpty)
                                 IconButton(
-                                  icon: Icon(LucideIcons.trash2, size: 18, color: cs.error),
+                                  icon: Icon(
+                                    LucideIcons.trash2,
+                                    size: 18,
+                                    color: cs.error,
+                                  ),
                                   onPressed: () => cartNotifier.clearCart(),
                                 ),
                               IconButton(
                                 icon: const Icon(LucideIcons.x, size: 20),
-                                onPressed: () => setState(() => _showCart = false),
+                                onPressed: () =>
+                                    setState(() => _showCart = false),
                               ),
                             ],
                           ),
@@ -374,7 +597,12 @@ class _PosPageState extends ConsumerState<PosPage> {
                               controller: scrollController,
                               padding: const EdgeInsets.all(16),
                               itemCount: cart.length,
-                              itemBuilder: (_, i) => _buildCartItem(cart[i], theme, cs, cartNotifier),
+                              itemBuilder: (_, i) => _buildCartItem(
+                                cart[i],
+                                theme,
+                                cs,
+                                cartNotifier,
+                              ),
                             ),
                     ),
 
@@ -390,7 +618,12 @@ class _PosPageState extends ConsumerState<PosPage> {
     );
   }
 
-  Widget _buildDesktopCart(ThemeData theme, ColorScheme cs, List cart, CartNotifier cartNotifier) {
+  Widget _buildDesktopCart(
+    ThemeData theme,
+    ColorScheme cs,
+    List cart,
+    CartNotifier cartNotifier,
+  ) {
     return Container(
       width: 380,
       decoration: BoxDecoration(
@@ -405,7 +638,9 @@ class _PosPageState extends ConsumerState<PosPage> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: cs.secondary.withOpacity(0.3),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -438,7 +673,8 @@ class _PosPageState extends ConsumerState<PosPage> {
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: cart.length,
-                    itemBuilder: (_, i) => _buildCartItem(cart[i], theme, cs, cartNotifier),
+                    itemBuilder: (_, i) =>
+                        _buildCartItem(cart[i], theme, cs, cartNotifier),
                   ),
           ),
 
@@ -469,7 +705,12 @@ class _PosPageState extends ConsumerState<PosPage> {
     );
   }
 
-  Widget _buildCartItem(dynamic item, ThemeData theme, ColorScheme cs, CartNotifier cartNotifier) {
+  Widget _buildCartItem(
+    dynamic item,
+    ThemeData theme,
+    ColorScheme cs,
+    CartNotifier cartNotifier,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -569,7 +810,12 @@ class _PosPageState extends ConsumerState<PosPage> {
     );
   }
 
-  Widget _buildCartFooter(ThemeData theme, ColorScheme cs, List cart, CartNotifier cartNotifier) {
+  Widget _buildCartFooter(
+    ThemeData theme,
+    ColorScheme cs,
+    List cart,
+    CartNotifier cartNotifier,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -604,10 +850,12 @@ class _PosPageState extends ConsumerState<PosPage> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
-              onPressed: cart.isEmpty ? null : () {
-                setState(() => _showCart = false);
-                context.go('/pos/checkout');
-              },
+              onPressed: cart.isEmpty
+                  ? null
+                  : () {
+                      setState(() => _showCart = false);
+                      context.go('/pos/checkout');
+                    },
               child: const Text(
                 'Checkout',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),

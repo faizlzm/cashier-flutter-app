@@ -3,16 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class Sidebar extends ConsumerStatefulWidget {
   final bool isDrawer;
   final VoidCallback? onItemTap;
-  
-  const Sidebar({
-    super.key, 
-    this.isDrawer = false,
-    this.onItemTap,
-  });
+
+  const Sidebar({super.key, this.isDrawer = false, this.onItemTap});
 
   @override
   ConsumerState<Sidebar> createState() => _SidebarState();
@@ -35,7 +32,11 @@ class _SidebarState extends ConsumerState<Sidebar> {
     final menuItems = [
       {'icon': LucideIcons.home, 'label': 'Home', 'path': '/dashboard'},
       {'icon': LucideIcons.shoppingBag, 'label': 'POS', 'path': '/pos'},
-      {'icon': LucideIcons.clipboardList, 'label': 'Riwayat', 'path': '/transactions'},
+      {
+        'icon': LucideIcons.clipboardList,
+        'label': 'Riwayat',
+        'path': '/transactions',
+      },
       {'icon': LucideIcons.settings, 'label': 'Setting', 'path': '/settings'},
     ];
 
@@ -49,8 +50,8 @@ class _SidebarState extends ConsumerState<Sidebar> {
       width: sidebarWidth,
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: widget.isDrawer 
-            ? null 
+        border: widget.isDrawer
+            ? null
             : Border(right: BorderSide(color: theme.dividerColor)),
       ),
       child: LayoutBuilder(
@@ -66,15 +67,17 @@ class _SidebarState extends ConsumerState<Sidebar> {
                   border: Border(bottom: BorderSide(color: theme.dividerColor)),
                 ),
                 child: Row(
-                  mainAxisAlignment:
-                      isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: isCollapsed
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.spaceBetween,
                   children: [
                     if (!isCollapsed && showText)
                       Expanded(
                         child: Text(
                           'KASIR PRO',
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -82,7 +85,8 @@ class _SidebarState extends ConsumerState<Sidebar> {
                     if (!widget.isDrawer)
                       IconButton(
                         icon: const Icon(LucideIcons.menu, size: 20),
-                        onPressed: () => setState(() => _collapsed = !_collapsed),
+                        onPressed: () =>
+                            setState(() => _collapsed = !_collapsed),
                       ),
                   ],
                 ),
@@ -96,7 +100,9 @@ class _SidebarState extends ConsumerState<Sidebar> {
                     vertical: 8,
                   ),
                   children: menuItems.map((item) {
-                    final isActive = currentPath.startsWith(item['path'] as String);
+                    final isActive = currentPath.startsWith(
+                      item['path'] as String,
+                    );
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Material(
@@ -111,8 +117,9 @@ class _SidebarState extends ConsumerState<Sidebar> {
                               vertical: 12,
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+                              mainAxisAlignment: isCollapsed
+                                  ? MainAxisAlignment.center
+                                  : MainAxisAlignment.start,
                               children: [
                                 Icon(
                                   item['icon'] as IconData,
@@ -131,7 +138,9 @@ class _SidebarState extends ConsumerState<Sidebar> {
                                         fontWeight: FontWeight.w500,
                                         color: isActive
                                             ? cs.onPrimary
-                                            : cs.onSurface.withValues(alpha: 0.8),
+                                            : cs.onSurface.withValues(
+                                                alpha: 0.8,
+                                              ),
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
@@ -165,15 +174,17 @@ class _SidebarState extends ConsumerState<Sidebar> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
-                        onTap: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+                        onTap: () =>
+                            ref.read(themeModeProvider.notifier).toggleTheme(),
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: isCollapsed ? 0 : 12,
                             vertical: 10,
                           ),
                           child: Row(
-                            mainAxisAlignment:
-                                isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+                            mainAxisAlignment: isCollapsed
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: [
                               Icon(
                                 isDark ? LucideIcons.sun : LucideIcons.moon,
@@ -188,7 +199,9 @@ class _SidebarState extends ConsumerState<Sidebar> {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
-                                      color: cs.onSurface.withValues(alpha: 0.8),
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.8,
+                                      ),
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -205,9 +218,13 @@ class _SidebarState extends ConsumerState<Sidebar> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          context.go('/login');
-                          widget.onItemTap?.call();
+                        onTap: () async {
+                          // Import auth provider and call logout
+                          await ref.read(authProvider.notifier).logout();
+                          if (context.mounted) {
+                            context.go('/login');
+                            widget.onItemTap?.call();
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
@@ -215,10 +232,15 @@ class _SidebarState extends ConsumerState<Sidebar> {
                             vertical: 10,
                           ),
                           child: Row(
-                            mainAxisAlignment:
-                                isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
+                            mainAxisAlignment: isCollapsed
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
                             children: [
-                              Icon(LucideIcons.logOut, size: 18, color: cs.error),
+                              Icon(
+                                LucideIcons.logOut,
+                                size: 18,
+                                color: cs.error,
+                              ),
                               if (!isCollapsed && showText) ...[
                                 const SizedBox(width: 12),
                                 Flexible(

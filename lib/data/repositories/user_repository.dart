@@ -1,12 +1,15 @@
 import '../models/user_model.dart';
 
+/// User repository - to be replaced with API calls in auth flow
+/// This is kept for backward compatibility but will be deprecated
 class UserRepository {
-  static const User currentUser = User(
+  // Mock user - will be replaced by auth provider
+  static User currentUser = User(
+    id: 'mock-user-id',
     name: 'Admin User',
-    role: 'admin',
+    role: 'ADMIN',
     email: 'admin@kasirpro.com',
   );
 
   User getCurrentUser() => currentUser;
 }
-

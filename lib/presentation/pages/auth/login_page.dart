@@ -1,29 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/utils/responsive_utils.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_input.dart';
 import '../../widgets/app_card.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  bool _isLoading = false;
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String? _errorMessage;
 
-  void _handleLogin() {
-    setState(() => _isLoading = true);
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() => _isLoading = false);
-      if (mounted) context.go('/dashboard');
-    });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    // Clear previous errors
+    setState(() => _errorMessage = null);
+
+    // Validate form
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty) {
+      setState(() => _errorMessage = 'Email tidak boleh kosong');
+      return;
+    }
+
+    if (password.isEmpty) {
+      setState(() => _errorMessage = 'Password tidak boleh kosong');
+      return;
+    }
+
+    try {
+      await ref
+          .read(authProvider.notifier)
+          .login(email: email, password: password);
+
+      // Navigation is handled by router redirect
+      if (mounted) {
+        context.go('/dashboard');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage =
+              ref.read(authProvider).error ?? 'Login gagal. Silakan coba lagi.';
+        });
+      }
+    }
   }
 
   @override
@@ -33,13 +72,19 @@ class _LoginPageState extends State<LoginPage> {
     final isCompactHeight = context.isCompactHeight;
     final isLandscape = context.isLandscape;
 
+    final authState = ref.watch(authProvider);
+    final isLoading = authState.isLoading;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [cs.primary.withOpacity(0.1), theme.scaffoldBackgroundColor],
+            colors: [
+              cs.primary.withOpacity(0.1),
+              theme.scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: Center(
@@ -49,15 +94,16 @@ class _LoginPageState extends State<LoginPage> {
               vertical: isCompactHeight ? 12 : 24,
             ),
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: isLandscape ? 600 : 400,
-              ),
+              constraints: BoxConstraints(maxWidth: isLandscape ? 600 : 400),
               child: AppCard(
                 glass: true,
                 padding: EdgeInsets.all(isCompactHeight ? 16 : 32),
-                child: isLandscape && isCompactHeight
-                    ? _buildLandscapeLayout(theme, cs)
-                    : _buildPortraitLayout(theme, cs),
+                child: Form(
+                  key: _formKey,
+                  child: isLandscape && isCompactHeight
+                      ? _buildLandscapeLayout(theme, cs, isLoading)
+                      : _buildPortraitLayout(theme, cs, isLoading),
+                ),
               ),
             ),
           ),
@@ -66,7 +112,38 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLandscapeLayout(ThemeData theme, ColorScheme cs) {
+  Widget _buildErrorBanner(ColorScheme cs) {
+    if (_errorMessage == null) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: cs.error.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: cs.error.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(LucideIcons.alertCircle, color: cs.error, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(color: cs.error, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLandscapeLayout(
+    ThemeData theme,
+    ColorScheme cs,
+    bool isLoading,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -111,15 +188,17 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              _buildErrorBanner(cs),
               AppInput(
                 controller: _emailController,
-                placeholder: 'Email: admin@kasirpro.com',
+                placeholder: 'Email',
                 prefixIcon: Icon(
                   LucideIcons.mail,
                   size: 16,
                   color: cs.onSurface.withOpacity(0.4),
                 ),
                 keyboardType: TextInputType.emailAddress,
+                enabled: !isLoading,
               ),
               const SizedBox(height: 12),
               AppInput(
@@ -131,12 +210,14 @@ class _LoginPageState extends State<LoginPage> {
                   size: 16,
                   color: cs.onSurface.withOpacity(0.4),
                 ),
+                enabled: !isLoading,
+                onSubmitted: (_) => _handleLogin(),
               ),
               const SizedBox(height: 12),
               AppButton(
                 text: 'Masuk',
-                onPressed: _handleLogin,
-                isLoading: _isLoading,
+                onPressed: isLoading ? null : _handleLogin,
+                isLoading: isLoading,
                 fullWidth: true,
               ),
               const SizedBox(height: 8),
@@ -144,7 +225,9 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () => context.go('/forgot-password'),
+                    onPressed: isLoading
+                        ? null
+                        : () => context.go('/forgot-password'),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       minimumSize: Size.zero,
@@ -159,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => context.go('/register'),
+                    onPressed: isLoading ? null : () => context.go('/register'),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       minimumSize: Size.zero,
@@ -183,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildPortraitLayout(ThemeData theme, ColorScheme cs) {
+  Widget _buildPortraitLayout(ThemeData theme, ColorScheme cs, bool isLoading) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -213,15 +296,17 @@ class _LoginPageState extends State<LoginPage> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 32),
+        _buildErrorBanner(cs),
         AppInput(
           controller: _emailController,
-          placeholder: 'Email: admin@kasirpro.com',
+          placeholder: 'Email',
           prefixIcon: Icon(
             LucideIcons.mail,
             size: 18,
             color: cs.onSurface.withOpacity(0.4),
           ),
           keyboardType: TextInputType.emailAddress,
+          enabled: !isLoading,
         ),
         const SizedBox(height: 16),
         AppInput(
@@ -233,29 +318,14 @@ class _LoginPageState extends State<LoginPage> {
             size: 18,
             color: cs.onSurface.withOpacity(0.4),
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: Checkbox(value: false, onChanged: (v) {}),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Ingat Saya',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: cs.onSurface.withOpacity(0.6),
-              ),
-            ),
-          ],
+          enabled: !isLoading,
+          onSubmitted: (_) => _handleLogin(),
         ),
         const SizedBox(height: 24),
         AppButton(
           text: 'Masuk',
-          onPressed: _handleLogin,
-          isLoading: _isLoading,
+          onPressed: isLoading ? null : _handleLogin,
+          isLoading: isLoading,
           fullWidth: true,
           size: BtnSize.lg,
         ),
@@ -264,7 +334,9 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: () => context.go('/forgot-password'),
+              onPressed: isLoading
+                  ? null
+                  : () => context.go('/forgot-password'),
               child: Text(
                 'Lupa Password?',
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -273,7 +345,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             TextButton(
-              onPressed: () => context.go('/register'),
+              onPressed: isLoading ? null : () => context.go('/register'),
               child: Text(
                 'Daftar Baru',
                 style: theme.textTheme.bodySmall?.copyWith(

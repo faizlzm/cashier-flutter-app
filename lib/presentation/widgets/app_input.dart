@@ -7,9 +7,13 @@ class AppInput extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final bool readOnly;
+  final bool enabled;
   final TextAlign textAlign;
   final TextStyle? style;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
 
   const AppInput({
     super.key,
@@ -19,9 +23,13 @@ class AppInput extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.onChanged,
+    this.onSubmitted,
     this.readOnly = false,
+    this.enabled = true,
     this.textAlign = TextAlign.start,
     this.style,
+    this.focusNode,
+    this.textInputAction,
   });
 
   @override
@@ -31,9 +39,13 @@ class AppInput extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
       readOnly: readOnly,
+      enabled: enabled,
       textAlign: textAlign,
       style: style,
+      focusNode: focusNode,
+      textInputAction: textInputAction,
       decoration: InputDecoration(
         hintText: placeholder,
         prefixIcon: prefixIcon != null
@@ -47,4 +59,3 @@ class AppInput extends StatelessWidget {
     );
   }
 }
-

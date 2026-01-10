@@ -4,17 +4,22 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../providers/transaction_provider.dart';
 
 class SuccessPage extends ConsumerStatefulWidget {
   final int received;
   final int change;
   final String method;
+  final String? transactionCode;
+  final String? transactionId;
 
   const SuccessPage({
     super.key,
     required this.received,
     required this.change,
     required this.method,
+    this.transactionCode,
+    this.transactionId,
   });
 
   @override
@@ -26,7 +31,10 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Clear cart if not already cleared
       ref.read(cartProvider.notifier).clearCart();
+      // Reset checkout state
+      ref.read(checkoutProvider.notifier).reset();
     });
   }
 
@@ -35,6 +43,11 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final total = widget.received - widget.change;
+
+    // Use real transaction code or fallback
+    final transactionCode =
+        widget.transactionCode ??
+        'TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
 
     return Center(
       child: SingleChildScrollView(
@@ -79,8 +92,11 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'ID Transaksi #TRX-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
-                style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
+                '#$transactionCode',
+                style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.6),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 32),
               Container(
@@ -94,26 +110,35 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
                     _infoRow(context, 'Metode Pembayaran', widget.method),
                     const SizedBox(height: 12),
                     _infoRow(context, 'Total Tagihan', formatRupiah(total)),
-                    const SizedBox(height: 12),
-                    _infoRow(context, 'Tunai Diterima', formatRupiah(widget.received)),
-                    const Divider(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Kembalian',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        Text(
-                          formatRupiah(widget.change),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: cs.primary,
+                    if (widget.method == 'CASH') ...[
+                      const SizedBox(height: 12),
+                      _infoRow(
+                        context,
+                        'Tunai Diterima',
+                        formatRupiah(widget.received),
+                      ),
+                      const Divider(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Kembalian',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                          Text(
+                            formatRupiah(widget.change),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: cs.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -122,7 +147,14 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
                 width: double.infinity,
                 height: 48,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    // TODO: Implement print receipt
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Fitur cetak struk belum tersedia'),
+                      ),
+                    );
+                  },
                   icon: const Icon(LucideIcons.printer),
                   label: const Text(
                     'Cetak Struk',
@@ -157,7 +189,9 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
       children: [
         Text(
           label,
-          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+          style: TextStyle(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
         ),
         Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
       ],
