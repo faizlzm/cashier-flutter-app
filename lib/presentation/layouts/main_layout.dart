@@ -42,35 +42,37 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       drawer: useDrawer
           ? Drawer(child: Sidebar(isDrawer: true, onItemTap: _closeDrawer))
           : null,
-      body: Row(
-        children: [
-          // Sidebar - only show on desktop/tablet in portrait
-          if (!useDrawer) const Sidebar(),
+      body: SafeArea(
+        child: Row(
+          children: [
+            // Sidebar - only show on desktop/tablet in portrait
+            if (!useDrawer) const Sidebar(),
 
-          // Main content
-          Expanded(
-            child: Column(
-              children: [
-                // Offline banner at top
-                const OfflineBanner(),
-                SizedBox(
-                  height: headerHeight,
-                  child: Header(
-                    onMenuPressed: useDrawer ? _openDrawer : null,
-                    compact: isCompactHeight,
+            // Main content
+            Expanded(
+              child: Column(
+                children: [
+                  // Offline banner at top
+                  const OfflineBanner(),
+                  SizedBox(
+                    height: headerHeight,
+                    child: Header(
+                      onMenuPressed: useDrawer ? _openDrawer : null,
+                      compact: isCompactHeight,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: EdgeInsets.all(contentPadding),
-                    child: widget.child,
+                  Expanded(
+                    child: Container(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      padding: EdgeInsets.all(contentPadding),
+                      child: widget.child,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

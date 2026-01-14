@@ -1,29 +1,96 @@
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:device_info_plus/device_info_plus.dart';
 
-/// App configuration with auto-detect API URL based on platform
+/// App configuration with auto-detect API URL based on platform and emulator detection
 class AppConfig {
   // Private constructor to prevent instantiation
   AppConfig._();
 
-  /// API base URL - auto-detected based on platform
-  static String get apiBaseUrl {
-    // Override URL for real devices (uncomment and set your IP)
-    // const overrideUrl = 'http://192.168.1.x:3001/api';
-    // return overrideUrl;
+  // Cache for emulator detection result
+  static bool? _isEmulatorCached;
 
+  /// Your computer's local IP for physical device testing
+  static const String localIp = '192.168.1.2';
+
+  /// API port
+  static const int apiPort = 3001;
+
+  /// Check if running on Android emulator
+  static Future<bool> isAndroidEmulator() async {
+    if (_isEmulatorCached != null) return _isEmulatorCached!;
+
+    if (!Platform.isAndroid) {
+      _isEmulatorCached = false;
+      return false;
+    }
+
+    try {
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+
+      // Emulator detection based on device properties
+      _isEmulatorCached =
+          !androidInfo.isPhysicalDevice ||
+          androidInfo.brand.toLowerCase() == 'google' &&
+              androidInfo.model.toLowerCase().contains('sdk') ||
+          androidInfo.fingerprint.contains('generic') ||
+          androidInfo.fingerprint.contains('emulator') ||
+          androidInfo.hardware.contains('goldfish') ||
+          androidInfo.hardware.contains('ranchu') ||
+          androidInfo.product.contains('sdk') ||
+          androidInfo.product.contains('emulator');
+
+      return _isEmulatorCached!;
+    } catch (e) {
+      // Default to emulator URL if detection fails
+      _isEmulatorCached = true;
+      return true;
+    }
+  }
+
+  /// Get API base URL - use this for async initialization
+  static Future<String> getApiBaseUrl() async {
     if (kIsWeb) {
-      // Web runs in browser on same machine
-      return 'http://localhost:3001/api';
+      return 'http://localhost:$apiPort/api';
     }
 
     if (Platform.isAndroid) {
-      // Android emulator uses special IP to reach host localhost
-      return 'http://10.0.2.2:3001/api';
+      final isEmulator = await isAndroidEmulator();
+      if (isEmulator) {
+        return 'http://10.0.2.2:$apiPort/api'; // Emulator
+      }
+      return 'http://$localIp:$apiPort/api'; // Physical device
     }
 
     // iOS simulator / macOS / Windows / Linux
-    return 'http://localhost:3001/api';
+    return 'http://localhost:$apiPort/api';
+  }
+
+  /// Sync API base URL - uses cached value or defaults to emulator URL
+  /// Call getApiBaseUrl() once during app initialization to populate cache
+  static String get apiBaseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:$apiPort/api';
+    }
+
+    if (Platform.isAndroid) {
+      // Use cached value, default to emulator URL if not yet detected
+      final isEmulator = _isEmulatorCached ?? true;
+      if (isEmulator) {
+        return 'http://10.0.2.2:$apiPort/api';
+      }
+      return 'http://$localIp:$apiPort/api';
+    }
+
+    return 'http://localhost:$apiPort/api';
+  }
+
+  /// Initialize the config (call this in main.dart before runApp)
+  static Future<void> initialize() async {
+    if (Platform.isAndroid) {
+      await isAndroidEmulator();
+    }
   }
 
   /// API timeout duration

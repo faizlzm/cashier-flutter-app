@@ -51,6 +51,9 @@ dependencies:
   dio: ^5.4.0
   connectivity_plus: ^6.0.0
 
+  # Device Info
+  device_info_plus: ^10.1.0
+
   # Storage
   flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.2.0

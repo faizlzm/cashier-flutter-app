@@ -85,7 +85,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                     children: [
                       Expanded(
                         child: AppInput(
-                          placeholder: 'Cari ID Transaksi...',
+                          placeholder: 'Cari Kode Transaksi...',
                           prefixIcon: Icon(
                             LucideIcons.search,
                             size: 18,
@@ -113,30 +113,32 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Riwayat Transaksi',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Riwayat Transaksi',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Pantau semua pemasukan dan detail transaksi toko Anda',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.6),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Pantau semua pemasukan dan detail transaksi toko Anda',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurface.withValues(alpha: 0.6),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     children: [
                       SizedBox(
                         width: 250,
                         child: AppInput(
-                          placeholder: 'Cari ID Transaksi...',
+                          placeholder: 'Cari Kode Transaksi...',
                           prefixIcon: Icon(
                             LucideIcons.search,
                             size: 18,
@@ -272,35 +274,41 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: cs.secondary.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            trx.id,
-                            style: TextStyle(
-                              fontFamily: 'monospace',
-                              fontSize: 11,
-                              color: cs.onSurface.withValues(alpha: 0.7),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: cs.secondary.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              trx.transactionCode,
+                              style: TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 11,
+                                color: cs.onSurface.withValues(alpha: 0.7),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${formatDateShort(trx.date)} • ${formatTime(trx.date)}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: cs.onSurface.withValues(alpha: 0.5),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              '${formatDateShort(trx.date)} • ${formatTime(trx.date)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: cs.onSurface.withValues(alpha: 0.5),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Row(
                       children: [
@@ -355,7 +363,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                 SizedBox(
                   width: 100,
                   child: Text(
-                    'ID',
+                    'Kode',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: cs.onSurface.withValues(alpha: 0.6),
@@ -453,7 +461,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  trx.id,
+                                  trx.transactionCode,
                                   style: TextStyle(
                                     fontFamily: 'monospace',
                                     fontSize: 12,
@@ -477,7 +485,9 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                     formatTime(trx.date),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: cs.onSurface.withValues(alpha: 0.5),
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.5,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -524,8 +534,8 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                           '${trx.items.length} item • ${primary.category == 'FOOD' ? 'Makanan' : 'Minuman'}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: cs.onSurface.withValues(alpha: 
-                                              0.5,
+                                            color: cs.onSurface.withValues(
+                                              alpha: 0.5,
                                             ),
                                           ),
                                         ),
@@ -566,7 +576,9 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                                     : trx.status,
                                 backgroundColor: AppColors.greenBg,
                                 textColor: AppColors.green,
-                                borderColor: AppColors.green.withValues(alpha: 0.3),
+                                borderColor: AppColors.green.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -609,14 +621,18 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                       onPressed: null,
                       child: Text(
                         'Sebelumnya',
-                        style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
+                        style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.4),
+                        ),
                       ),
                     ),
                     TextButton(
                       onPressed: null,
                       child: Text(
                         'Selanjutnya',
-                        style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
+                        style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.4),
+                        ),
                       ),
                     ),
                   ],
