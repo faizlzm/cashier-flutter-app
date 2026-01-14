@@ -10,6 +10,21 @@ class AppConfig {
   // Cache for emulator detection result
   static bool? _isEmulatorCached;
 
+  // ============================================
+  // CLOUDFLARE TUNNEL CONFIGURATION
+  // ============================================
+
+  /// Enable tunnel mode for testing via Cloudflare Tunnel
+  /// Set to true to use HTTPS tunnel URL, false for local development
+  static const bool useTunnel = true;
+
+  /// Cloudflare Tunnel URL (HTTPS)
+  static const String tunnelUrl = 'https://cashier-api.faizlzm.com';
+
+  // ============================================
+  // LOCAL DEVELOPMENT CONFIGURATION
+  // ============================================
+
   /// Your computer's local IP for physical device testing
   static const String localIp = '192.168.1.2';
 
@@ -51,6 +66,12 @@ class AppConfig {
 
   /// Get API base URL - use this for async initialization
   static Future<String> getApiBaseUrl() async {
+    // If tunnel mode is enabled, use Cloudflare Tunnel URL for all platforms
+    if (useTunnel) {
+      return '$tunnelUrl/api';
+    }
+
+    // Local development mode
     if (kIsWeb) {
       return 'http://localhost:$apiPort/api';
     }
@@ -70,6 +91,12 @@ class AppConfig {
   /// Sync API base URL - uses cached value or defaults to emulator URL
   /// Call getApiBaseUrl() once during app initialization to populate cache
   static String get apiBaseUrl {
+    // If tunnel mode is enabled, use Cloudflare Tunnel URL for all platforms
+    if (useTunnel) {
+      return '$tunnelUrl/api';
+    }
+
+    // Local development mode
     if (kIsWeb) {
       return 'http://localhost:$apiPort/api';
     }
