@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/helpers.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../../providers/dashboard_provider.dart';
+import '../../../providers/network_status_provider.dart';
 import '../../widgets/app_badge.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -32,6 +33,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final dashboardState = ref.watch(dashboardProvider);
+    final networkState = ref.watch(networkStatusProvider);
+    final isOnline = networkState.isOnline;
     final isMobile = context.isMobile;
     final isTablet = context.isTablet;
 
@@ -61,12 +64,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         'bg': AppColors.orangeBg,
       },
       {
-        'label': 'Status',
-        'value': dashboardState.isLoading ? 'Loading...' : 'Online',
-        'icon': LucideIcons.activity,
-        'trend': 'Terhubung ke server',
-        'color': AppColors.purple,
-        'bg': AppColors.purpleBg,
+        'label': 'Status Koneksi',
+        'value': isOnline ? 'Online' : 'Offline',
+        'icon': isOnline ? LucideIcons.wifi : LucideIcons.wifiOff,
+        'trend': isOnline ? 'Terhubung ke server' : 'Mode offline aktif',
+        'color': isOnline ? AppColors.green : Colors.red,
+        'bg': isOnline ? AppColors.greenBg : Colors.red.withValues(alpha: 0.1),
       },
     ];
 

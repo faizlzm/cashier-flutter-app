@@ -51,7 +51,6 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     final change = _cashReceived - total;
     if (_paymentMethod == 'CASH' && _cashReceived < total) return;
 
-
     // Build transaction items from cart
     final cart = ref.read(cartProvider);
     final items = cart
@@ -64,9 +63,17 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         .toList();
 
     // Submit to API
+    final subtotal = ref.read(cartProvider.notifier).subtotal;
+    final taxAmount = ref.read(cartProvider.notifier).tax;
     final transaction = await ref
         .read(checkoutProvider.notifier)
-        .submitTransaction(items: items, paymentMethod: _paymentMethod);
+        .submitTransaction(
+          items: items,
+          paymentMethod: _paymentMethod,
+          subtotal: subtotal,
+          tax: taxAmount,
+          total: total,
+        );
 
     if (transaction != null && mounted) {
       // Clear cart after successful transaction
@@ -746,8 +753,8 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                           '${item.quantity}x @ ${formatRupiah(item.product.price)}',
                                           style: theme.textTheme.bodySmall
                                               ?.copyWith(
-                                                color: cs.onSurface.withValues(alpha: 
-                                                  0.6,
+                                                color: cs.onSurface.withValues(
+                                                  alpha: 0.6,
                                                 ),
                                               ),
                                         ),
@@ -834,7 +841,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                   decoration: BoxDecoration(
                     color: cs.primary.withValues(alpha: 0.05),
                     border: Border(
-                      bottom: BorderSide(color: cs.primary.withValues(alpha: 0.1)),
+                      bottom: BorderSide(
+                        color: cs.primary.withValues(alpha: 0.1),
+                      ),
                     ),
                   ),
                   child: Column(
@@ -907,7 +916,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: cs.onSurface.withValues(alpha: 0.5),
+                                        color: cs.onSurface.withValues(
+                                          alpha: 0.5,
+                                        ),
                                       ),
                                     ),
                                     Expanded(
@@ -960,8 +971,8 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                                                     vertical: 8,
                                                   ),
                                               side: BorderSide(
-                                                color: cs.primary.withValues(alpha: 
-                                                  0.3,
+                                                color: cs.primary.withValues(
+                                                  alpha: 0.3,
                                                 ),
                                               ),
                                             ),
@@ -1157,7 +1168,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           color: isActive ? Theme.of(context).cardColor : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isActive ? cs.primary.withValues(alpha: 0.2) : Colors.transparent,
+            color: isActive
+                ? cs.primary.withValues(alpha: 0.2)
+                : Colors.transparent,
             width: 2,
           ),
         ),
@@ -1167,14 +1180,18 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
             Icon(
               icon,
               size: 18,
-              color: isActive ? cs.primary : cs.onSurface.withValues(alpha: 0.6),
+              color: isActive
+                  ? cs.primary
+                  : cs.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isActive ? cs.primary : cs.onSurface.withValues(alpha: 0.6),
+                color: isActive
+                    ? cs.primary
+                    : cs.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

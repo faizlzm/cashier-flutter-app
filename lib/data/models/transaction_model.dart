@@ -1,3 +1,4 @@
+import 'dart:convert' show jsonEncode, jsonDecode;
 import 'product_model.dart';
 
 /// Transaction item matching API response
@@ -157,11 +158,18 @@ class CreateTransactionRequest {
   final List<TransactionItemRequest> items;
   final String paymentMethod;
   final int? discount;
+  // Extended fields for offline storage
+  final int? subtotal;
+  final int? tax;
+  final int? total;
 
   const CreateTransactionRequest({
     required this.items,
     required this.paymentMethod,
     this.discount,
+    this.subtotal,
+    this.tax,
+    this.total,
   });
 
   Map<String, dynamic> toJson() {
@@ -171,21 +179,93 @@ class CreateTransactionRequest {
       if (discount != null && discount! > 0) 'discount': discount,
     };
   }
+
+  /// Full JSON for offline storage (includes calculated fields)
+  Map<String, dynamic> toFullJson() {
+    return {
+      'items': items.map((i) => i.toFullJson()).toList(),
+      'paymentMethod': paymentMethod,
+      'discount': discount ?? 0,
+      'subtotal': subtotal ?? 0,
+      'tax': tax ?? 0,
+      'total': total ?? 0,
+    };
+  }
+
+  /// Serialize to JSON string for SQLite storage
+  String toJsonString() {
+    return _jsonEncode(toFullJson());
+  }
+
+  /// Deserialize from JSON string
+  factory CreateTransactionRequest.fromJsonString(String jsonStr) {
+    final json = _jsonDecode(jsonStr);
+    final itemsJson = json['items'] as List? ?? [];
+
+    return CreateTransactionRequest(
+      items: itemsJson
+          .map(
+            (i) => TransactionItemRequest.fromJson(i as Map<String, dynamic>),
+          )
+          .toList(),
+      paymentMethod: json['paymentMethod'] as String? ?? 'CASH',
+      discount: json['discount'] as int?,
+      subtotal: json['subtotal'] as int?,
+      tax: json['tax'] as int?,
+      total: json['total'] as int?,
+    );
+  }
 }
 
 /// Item in transaction request
 class TransactionItemRequest {
   final String productId;
+  final String productName;
   final int quantity;
+  final int price;
+  final String category;
 
   const TransactionItemRequest({
     required this.productId,
     required this.quantity,
+    this.productName = '',
+    this.price = 0,
+    this.category = '',
   });
 
   Map<String, dynamic> toJson() {
     return {'productId': productId, 'quantity': quantity};
   }
+
+  /// Full JSON for offline storage
+  Map<String, dynamic> toFullJson() {
+    return {
+      'productId': productId,
+      'productName': productName,
+      'quantity': quantity,
+      'price': price,
+      'category': category,
+    };
+  }
+
+  factory TransactionItemRequest.fromJson(Map<String, dynamic> json) {
+    return TransactionItemRequest(
+      productId: json['productId'] as String,
+      quantity: json['quantity'] as int,
+      productName: json['productName'] as String? ?? '',
+      price: json['price'] as int? ?? 0,
+      category: json['category'] as String? ?? '',
+    );
+  }
+}
+
+// JSON encode/decode helpers
+String _jsonEncode(Map<String, dynamic> data) {
+  return jsonEncode(data);
+}
+
+Map<String, dynamic> _jsonDecode(String jsonStr) {
+  return jsonDecode(jsonStr) as Map<String, dynamic>;
 }
 
 /// Result from getTodayTransactions API
