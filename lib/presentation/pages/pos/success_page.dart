@@ -143,25 +143,7 @@ class _SuccessPageState extends ConsumerState<SuccessPage> {
                 ),
               ),
               const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement print receipt
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Fitur cetak struk belum tersedia'),
-                      ),
-                    );
-                  },
-                  icon: const Icon(LucideIcons.printer),
-                  label: const Text(
-                    'Cetak Struk',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
+              // Print receipt feature removed
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
