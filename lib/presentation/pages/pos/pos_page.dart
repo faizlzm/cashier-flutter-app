@@ -395,7 +395,7 @@ class _PosPageState extends ConsumerState<PosPage> {
           child: Opacity(
             opacity: isOutOfStock ? 0.5 : 1.0,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(context.isCompactHeight ? 8 : 12),
               child: Row(
                 children: [
                   Container(
@@ -624,8 +624,12 @@ class _PosPageState extends ConsumerState<PosPage> {
     List cart,
     CartNotifier cartNotifier,
   ) {
+    // Smaller cart in landscape mode
+    final cartWidth = context.isCompactHeight ? 300.0 : 380.0;
+    final basePadding = context.isCompactHeight ? 10.0 : 16.0;
+
     return Container(
-      width: 380,
+      width: cartWidth,
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
@@ -635,7 +639,7 @@ class _PosPageState extends ConsumerState<PosPage> {
         children: [
           // Cart Header
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(basePadding),
             decoration: BoxDecoration(
               color: cs.secondary.withValues(alpha: 0.3),
               borderRadius: const BorderRadius.vertical(
@@ -692,10 +696,10 @@ class _PosPageState extends ConsumerState<PosPage> {
         children: [
           Icon(
             LucideIcons.shoppingCart,
-            size: 48,
+            size: context.isCompactHeight ? 28 : 48,
             color: cs.onSurface.withValues(alpha: 0.2),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.isCompactHeight ? 4 : 8),
           Text(
             'Keranjang kosong',
             style: TextStyle(color: cs.onSurface.withValues(alpha: 0.5)),
