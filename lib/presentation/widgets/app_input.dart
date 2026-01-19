@@ -4,6 +4,7 @@ class AppInput extends StatelessWidget {
   final String? placeholder;
   final TextEditingController? controller;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
@@ -20,6 +21,7 @@ class AppInput extends StatelessWidget {
     this.placeholder,
     this.controller,
     this.prefixIcon,
+    this.suffixIcon,
     this.obscureText = false,
     this.keyboardType,
     this.onChanged,
@@ -55,6 +57,13 @@ class AppInput extends StatelessWidget {
               )
             : null,
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIcon: suffixIcon != null
+            ? Padding(
+                padding: const EdgeInsets.only(left: 8, right: 12),
+                child: suffixIcon,
+              )
+            : null,
+        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
       ),
     );
   }
