@@ -1,3 +1,11 @@
+/// Kasir Pro - Point of Sale Application
+///
+/// Entry point for the Flutter application.
+/// Initializes locale settings and app configuration before launching.
+///
+/// @author Kasir Pro Team
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';

@@ -1,3 +1,16 @@
+/// Kasir Pro - Main Application Widget
+///
+/// Root widget for the Kasir Pro application.
+/// Handles theme configuration, auth state, and routing.
+///
+/// Features:
+/// - Light/Dark theme switching
+/// - Auth-aware routing with GoRouter
+/// - Animated splash screen during initialization
+///
+/// @author Kasir Pro Team
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
