@@ -65,19 +65,6 @@ void main() {
       );
 
       expect(admin.isAdmin, isTrue);
-      expect(admin.isCashier, isFalse);
-    });
-
-    test('isCashier should return true for CASHIER role', () {
-      final cashier = User(
-        id: '2',
-        name: 'Cashier',
-        email: 'cashier@test.com',
-        role: 'CASHIER',
-      );
-
-      expect(cashier.isAdmin, isFalse);
-      expect(cashier.isCashier, isTrue);
     });
 
     test('copyWith should create new instance with updated values', () {

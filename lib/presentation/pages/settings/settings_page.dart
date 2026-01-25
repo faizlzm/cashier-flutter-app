@@ -46,7 +46,13 @@ class SettingsPage extends ConsumerWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Nama Lengkap', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                              const Text(
+                                'Nama Lengkap',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               AppInput(placeholder: user.name, readOnly: true),
                             ],
@@ -55,7 +61,13 @@ class SettingsPage extends ConsumerWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Email', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                              const Text(
+                                'Email',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               AppInput(placeholder: user.email, readOnly: true),
                             ],
@@ -63,11 +75,7 @@ class SettingsPage extends ConsumerWidget {
                           const SizedBox(height: 16),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Role', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                              const SizedBox(height: 8),
-                              AppInput(placeholder: user.role.toUpperCase(), readOnly: true),
-                            ],
+                            children: [],
                           ),
                         ],
                       )
@@ -79,9 +87,18 @@ class SettingsPage extends ConsumerWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Nama Lengkap', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                                    const Text(
+                                      'Nama Lengkap',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
-                                    AppInput(placeholder: user.name, readOnly: true),
+                                    AppInput(
+                                      placeholder: user.name,
+                                      readOnly: true,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -90,9 +107,18 @@ class SettingsPage extends ConsumerWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Email', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                                    const Text(
+                                      'Email',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
-                                    AppInput(placeholder: user.email, readOnly: true),
+                                    AppInput(
+                                      placeholder: user.email,
+                                      readOnly: true,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -104,11 +130,7 @@ class SettingsPage extends ConsumerWidget {
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Role', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                                    const SizedBox(height: 8),
-                                    AppInput(placeholder: user.role.toUpperCase(), readOnly: true),
-                                  ],
+                                  children: [],
                                 ),
                               ),
                             ],
@@ -131,20 +153,31 @@ class SettingsPage extends ConsumerWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Mode Gelap', style: TextStyle(fontWeight: FontWeight.w500)),
+                              const Text(
+                                'Mode Gelap',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
                               const SizedBox(height: 4),
                               Text(
                                 'Aktifkan mode gelap untuk kenyamanan mata',
-                                style: TextStyle(fontSize: 13, color: cs.onSurface.withValues(alpha: 0.6)),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: cs.onSurface.withValues(alpha: 0.6),
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 12),
                           AppButton(
                             text: isDark ? 'Light' : 'Dark',
-                            icon: Icon(isDark ? LucideIcons.sun : LucideIcons.moon, size: 16),
+                            icon: Icon(
+                              isDark ? LucideIcons.sun : LucideIcons.moon,
+                              size: 16,
+                            ),
                             variant: BtnVariant.outline,
-                            onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+                            onPressed: () => ref
+                                .read(themeModeProvider.notifier)
+                                .toggleTheme(),
                           ),
                         ],
                       )
@@ -154,19 +187,30 @@ class SettingsPage extends ConsumerWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Mode Gelap', style: TextStyle(fontWeight: FontWeight.w500)),
+                              const Text(
+                                'Mode Gelap',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
                               const SizedBox(height: 4),
                               Text(
                                 'Aktifkan mode gelap untuk kenyamanan mata',
-                                style: TextStyle(fontSize: 13, color: cs.onSurface.withValues(alpha: 0.6)),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: cs.onSurface.withValues(alpha: 0.6),
+                                ),
                               ),
                             ],
                           ),
                           AppButton(
                             text: isDark ? 'Light' : 'Dark',
-                            icon: Icon(isDark ? LucideIcons.sun : LucideIcons.moon, size: 16),
+                            icon: Icon(
+                              isDark ? LucideIcons.sun : LucideIcons.moon,
+                              size: 16,
+                            ),
                             variant: BtnVariant.outline,
-                            onPressed: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+                            onPressed: () => ref
+                                .read(themeModeProvider.notifier)
+                                .toggleTheme(),
                           ),
                         ],
                       ),
@@ -202,7 +246,13 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _card(BuildContext context, IconData icon, String title, String? subtitle, Widget content) {
+  Widget _card(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String? subtitle,
+    Widget content,
+  ) {
     final theme = Theme.of(context);
     final isMobile = context.isMobile;
     return Container(
@@ -222,7 +272,10 @@ class SettingsPage extends ConsumerWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(fontSize: isMobile ? 16 : 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: isMobile ? 16 : 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -231,7 +284,10 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(fontSize: isMobile ? 12 : 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              style: TextStyle(
+                fontSize: isMobile ? 12 : 14,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
             ),
           ],
           const SizedBox(height: 20),

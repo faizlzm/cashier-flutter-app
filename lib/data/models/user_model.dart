@@ -48,7 +48,6 @@ class User {
   bool get isAdmin => role.toUpperCase() == 'ADMIN';
 
   /// Check if user is cashier
-  bool get isCashier => role.toUpperCase() == 'CASHIER';
 
   /// Create a copy with updated fields
   User copyWith({
