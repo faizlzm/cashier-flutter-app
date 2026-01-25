@@ -98,7 +98,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        LucideIcons.layoutDashboard,
+                        LucideIcons.lock,
                         size: 32,
                         color: cs.primary,
                       ),
