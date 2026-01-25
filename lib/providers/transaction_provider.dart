@@ -7,19 +7,28 @@ import 'network_status_provider.dart';
 import 'offline_sync_provider.dart';
 
 /// State for transactions list
+/// State for transactions list
 class TransactionsState {
   final List<Transaction> transactions;
   final bool isLoading;
   final bool isRefreshing;
   final String? error;
-  final DateTime? filterDate;
+
+  // Filters
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? status;
+  final String? paymentMethod;
 
   const TransactionsState({
     this.transactions = const [],
     this.isLoading = false,
     this.isRefreshing = false,
     this.error,
-    this.filterDate,
+    this.startDate,
+    this.endDate,
+    this.status,
+    this.paymentMethod,
   });
 
   TransactionsState copyWith({
@@ -27,28 +36,25 @@ class TransactionsState {
     bool? isLoading,
     bool? isRefreshing,
     String? error,
-    DateTime? filterDate,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? status,
+    String? paymentMethod,
     bool clearError = false,
-    bool clearFilter = false,
+    bool clearFilters = false,
   }) {
     return TransactionsState(
       transactions: transactions ?? this.transactions,
       isLoading: isLoading ?? this.isLoading,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       error: clearError ? null : (error ?? this.error),
-      filterDate: clearFilter ? null : (filterDate ?? this.filterDate),
+      startDate: clearFilters ? null : (startDate ?? this.startDate),
+      endDate: clearFilters ? null : (endDate ?? this.endDate),
+      status: clearFilters ? null : (status ?? this.status),
+      paymentMethod: clearFilters
+          ? null
+          : (paymentMethod ?? this.paymentMethod),
     );
-  }
-
-  /// Get transactions filtered by date (local filter)
-  List<Transaction> get filteredTransactions {
-    if (filterDate == null) return transactions;
-
-    return transactions.where((t) {
-      return t.createdAt.year == filterDate!.year &&
-          t.createdAt.month == filterDate!.month &&
-          t.createdAt.day == filterDate!.day;
-    }).toList();
   }
 }
 
@@ -60,36 +66,23 @@ class TransactionsNotifier extends StateNotifier<TransactionsState> {
     : _transactionService = transactionService ?? TransactionService(),
       super(const TransactionsState());
 
-  /// Load transactions from API
-  Future<void> loadTransactions({DateTime? date}) async {
+  /// Load transactions using CURRENT filters in state
+  Future<void> loadTransactions() async {
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
-      List<Transaction> transactions;
-
-      if (date != null) {
-        // If filtering by date, we might not need limit if API returns all
-        // But better safe with pagination, maybe larger limit
-        final startOfDay = DateTime(date.year, date.month, date.day);
-        final endOfDay = startOfDay.add(const Duration(days: 1));
-        transactions = await _transactionService.getTransactions(
-          startDate: startOfDay,
-          endDate: endOfDay,
-          limit: 100, // Fetch more when filtering by date
-        );
-      } else {
-        // Fetch valid list size like PWA (limit: 50)
-        transactions = await _transactionService.getTransactions(limit: 50);
-      }
+      final transactions = await _transactionService.getTransactions(
+        startDate: state.startDate,
+        endDate: state.endDate,
+        status: state.status,
+        paymentMethod: state.paymentMethod,
+        limit: 50,
+      );
 
       // Sort by date descending
       transactions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-      state = state.copyWith(
-        transactions: transactions,
-        isLoading: false,
-        filterDate: date,
-      );
+      state = state.copyWith(isLoading: false, transactions: transactions);
     } on ApiException catch (e) {
       state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
@@ -100,31 +93,49 @@ class TransactionsNotifier extends StateNotifier<TransactionsState> {
     }
   }
 
-  /// Refresh transactions
-  Future<void> refresh() async {
-    state = state.copyWith(isRefreshing: true);
+  /// Apply specific filters and reload
+  /// Passing null means "no filter" (reset that specific filter) to avoid ambiguity,
+  /// we assume if you call this, you are providing the desired state for these fields.
+  Future<void> setFilters({
+    DateTime? startDate,
+    DateTime? endDate,
+    String? status,
+    String? paymentMethod,
+  }) async {
+    // We construct a new state with updated filters to ensure nulls are respected
+    // (copyWith typically ignores nulls, so we manually construct or use special flags)
+    // Here we preserve transactions/loading/error but replace filters.
 
-    try {
-      final transactions = await _transactionService.getTransactions(limit: 50);
-      transactions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    state = TransactionsState(
+      transactions: state.transactions,
+      isLoading: true, // Set loading immediately
+      isRefreshing: state.isRefreshing,
+      error: null, // Clear error on new filter
+      startDate: startDate,
+      endDate: endDate,
+      status: status,
+      paymentMethod: paymentMethod,
+    );
 
-      state = state.copyWith(
-        transactions: transactions,
-        isRefreshing: false,
-        clearError: true,
-        clearFilter: true,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isRefreshing: false,
-        error: 'Gagal memperbarui data.',
-      );
-    }
+    await loadTransactions();
   }
 
-  /// Set date filter
-  void setDateFilter(DateTime? date) {
-    state = state.copyWith(filterDate: date, clearFilter: date == null);
+  /// Refresh transactions using current filters (for Pull to Refresh)
+  Future<void> refresh() async {
+    state = state.copyWith(isRefreshing: true);
+    await loadTransactions();
+    state = state.copyWith(isRefreshing: false);
+  }
+
+  /// Reset all filters and reload
+  Future<void> resetFilters() async {
+    state = TransactionsState(
+      transactions: state.transactions,
+      isLoading: true,
+      error: null,
+      // All filters null by default in constructor
+    );
+    await loadTransactions();
   }
 
   /// Clear error

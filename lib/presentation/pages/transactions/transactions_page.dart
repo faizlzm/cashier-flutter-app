@@ -26,12 +26,293 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
     });
   }
 
+  void _showFilterBottomSheet() {
+    final state = ref.read(transactionsProvider);
+    DateTime? tempStartDate = state.startDate;
+    DateTime? tempEndDate = state.endDate;
+    String? tempStatus = state.status;
+    String? tempPaymentMethod = state.paymentMethod;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final theme = Theme.of(context);
+            final cs = theme.colorScheme;
+
+            return Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filter Transaksi',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Reset local state
+                          setState(() {
+                            tempStartDate = null;
+                            tempEndDate = null;
+                            tempStatus = null;
+                            tempPaymentMethod = null;
+                          });
+                        },
+                        child: Text('Reset', style: TextStyle(color: cs.error)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Date Filters
+                  Text(
+                    'Tanggal',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildFilterChip(
+                        label: 'Semua Tanggal',
+                        selected: tempStartDate == null,
+                        onSelected: (_) => setState(() {
+                          tempStartDate = null;
+                          tempEndDate = null;
+                        }),
+                      ),
+                      _buildFilterChip(
+                        label: 'Hari Ini',
+                        selected:
+                            _isSameDay(tempStartDate, DateTime.now()) &&
+                            tempEndDate == null, // Simplified logic for demo
+                        onSelected: (_) => setState(() {
+                          final now = DateTime.now();
+                          tempStartDate = DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                          );
+                          tempEndDate = DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                            23,
+                            59,
+                            59,
+                          );
+                        }),
+                      ),
+                      ActionChip(
+                        label: Text(
+                          (tempStartDate != null && tempEndDate != null)
+                              ? '${formatDateShort(tempStartDate!)} - ${formatDateShort(tempEndDate!)}'
+                              : 'Pilih Tanggal',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color:
+                                (tempStartDate != null && tempEndDate != null)
+                                ? cs.onPrimary
+                                : cs.onSurface,
+                          ),
+                        ),
+                        avatar: Icon(
+                          LucideIcons.calendar,
+                          size: 16,
+                          color: (tempStartDate != null && tempEndDate != null)
+                              ? cs.onPrimary
+                              : cs.onSurface.withValues(alpha: 0.6),
+                        ),
+                        backgroundColor:
+                            (tempStartDate != null && tempEndDate != null)
+                            ? cs.primary
+                            : null,
+                        onPressed: () async {
+                          final picked = await showDateRangePicker(
+                            context: context,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime.now(),
+                            initialDateRange:
+                                (tempStartDate != null && tempEndDate != null)
+                                ? DateTimeRange(
+                                    start: tempStartDate!,
+                                    end: tempEndDate!,
+                                  )
+                                : null,
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              tempStartDate = picked.start;
+                              tempEndDate = picked.end;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Status Section
+                  Text(
+                    'Status',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _buildFilterChip(
+                        label: 'Semua',
+                        selected: tempStatus == null,
+                        onSelected: (_) => setState(() => tempStatus = null),
+                      ),
+                      _buildFilterChip(
+                        label: 'Lunas',
+                        selected: tempStatus == 'PAID',
+                        onSelected: (_) => setState(() => tempStatus = 'PAID'),
+                      ),
+                      _buildFilterChip(
+                        label: 'Pending',
+                        selected: tempStatus == 'PENDING',
+                        onSelected: (_) =>
+                            setState(() => tempStatus = 'PENDING'),
+                      ),
+                      _buildFilterChip(
+                        label: 'Batal',
+                        selected: tempStatus == 'CANCELLED',
+                        onSelected: (_) =>
+                            setState(() => tempStatus = 'CANCELLED'),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Payment Method Section
+                  Text(
+                    'Metode Pembayaran',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _buildFilterChip(
+                        label: 'Semua',
+                        selected: tempPaymentMethod == null,
+                        onSelected: (_) =>
+                            setState(() => tempPaymentMethod = null),
+                      ),
+                      _buildFilterChip(
+                        label: 'Tunai',
+                        selected: tempPaymentMethod == 'CASH',
+                        onSelected: (_) =>
+                            setState(() => tempPaymentMethod = 'CASH'),
+                      ),
+                      _buildFilterChip(
+                        label: 'QRIS',
+                        selected: tempPaymentMethod == 'QRIS',
+                        onSelected: (_) =>
+                            setState(() => tempPaymentMethod = 'QRIS'),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ref
+                            .read(transactionsProvider.notifier)
+                            .setFilters(
+                              startDate: tempStartDate,
+                              endDate: tempEndDate,
+                              status: tempStatus,
+                              paymentMethod: tempPaymentMethod,
+                            );
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Terapkan Filter'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required bool selected,
+    required ValueChanged<bool> onSelected,
+  }) {
+    return FilterChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: onSelected,
+      showCheckmark: false,
+      labelStyle: TextStyle(
+        color: selected ? Theme.of(context).colorScheme.onPrimary : null,
+        fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+      ),
+      backgroundColor: Theme.of(context).cardColor,
+      selectedColor: Theme.of(context).colorScheme.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: selected ? Colors.transparent : Theme.of(context).dividerColor,
+        ),
+      ),
+    );
+  }
+
+  bool _isSameDay(DateTime? a, DateTime? b) {
+    if (a == null || b == null) return false;
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final state = ref.watch(transactionsProvider);
     final isMobile = context.isMobile;
+
+    // Check active filters for UI state
+    final isDateFilterActive = state.startDate != null || state.endDate != null;
+    final isStatusFilterActive =
+        state.status != null || state.paymentMethod != null;
 
     // Show loading state
     if (state.isLoading) {
@@ -58,7 +339,7 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
       );
     }
 
-    // Filter transactions by search
+    // Filter transactions by search (client-side for search only)
     final allTrx = state.transactions;
     final filtered = allTrx.where((t) {
       final searchLower = _search.toLowerCase();
@@ -96,14 +377,39 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                       ),
                       const SizedBox(width: 8),
                       IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          LucideIcons.filter,
-                          color: cs.onSurface.withValues(alpha: 0.6),
+                        onPressed: _showFilterBottomSheet,
+                        icon: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Icon(
+                              LucideIcons.slidersHorizontal,
+                              color:
+                                  (isDateFilterActive || isStatusFilterActive)
+                                  ? cs.primary
+                                  : cs.onSurface.withValues(alpha: 0.6),
+                            ),
+                            if (isDateFilterActive || isStatusFilterActive)
+                              Positioned(
+                                top: -2,
+                                right: -2,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: cs.error,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
-                          side: BorderSide(color: theme.dividerColor),
+                          side: BorderSide(
+                            color: (isDateFilterActive || isStatusFilterActive)
+                                ? cs.primary
+                                : theme.dividerColor,
+                          ),
                         ),
                       ),
                     ],
@@ -142,32 +448,152 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                       ),
                       const SizedBox(width: 8),
                       IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          LucideIcons.calendar,
-                          color: cs.onSurface.withValues(alpha: 0.6),
+                        onPressed: _showFilterBottomSheet,
+                        icon: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Icon(
+                              LucideIcons.slidersHorizontal,
+                              color:
+                                  (isDateFilterActive || isStatusFilterActive)
+                                  ? cs.primary
+                                  : cs.onSurface.withValues(alpha: 0.6),
+                            ),
+                            if (isDateFilterActive || isStatusFilterActive)
+                              Positioned(
+                                top: -2,
+                                right: -2,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: cs.error,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.cardColor,
-                          side: BorderSide(color: theme.dividerColor),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          LucideIcons.filter,
-                          color: cs.onSurface.withValues(alpha: 0.6),
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.cardColor,
-                          side: BorderSide(color: theme.dividerColor),
+                          side: BorderSide(
+                            color: (isDateFilterActive || isStatusFilterActive)
+                                ? cs.primary
+                                : theme.dividerColor,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
+
+        // Active Filters Chips
+        if (isDateFilterActive || isStatusFilterActive) ...[
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                if (state.startDate != null && state.endDate != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Chip(
+                      label: Text(
+                        '${formatDateShort(state.startDate!)} - ${formatDateShort(state.endDate!)}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      avatar: const Icon(LucideIcons.calendar, size: 14),
+                      deleteIcon: const Icon(LucideIcons.x, size: 14),
+                      onDeleted: () {
+                        ref
+                            .read(transactionsProvider.notifier)
+                            .setFilters(
+                              startDate: null,
+                              endDate: null,
+                              status: state.status,
+                              paymentMethod: state.paymentMethod,
+                            );
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      side: BorderSide(color: theme.dividerColor),
+                      backgroundColor: theme.cardColor,
+                    ),
+                  ),
+                if (state.status != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Chip(
+                      label: Text(
+                        state.status == 'PAID'
+                            ? 'Lunas'
+                            : state.status == 'PENDING'
+                            ? 'Pending'
+                            : 'Batal',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      avatar: const Icon(LucideIcons.checkCircle, size: 14),
+                      deleteIcon: const Icon(LucideIcons.x, size: 14),
+                      onDeleted: () {
+                        ref
+                            .read(transactionsProvider.notifier)
+                            .setFilters(
+                              startDate: state.startDate,
+                              endDate: state.endDate,
+                              status: null,
+                              paymentMethod: state.paymentMethod,
+                            );
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      side: BorderSide(color: theme.dividerColor),
+                      backgroundColor: theme.cardColor,
+                    ),
+                  ),
+                if (state.paymentMethod != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Chip(
+                      label: Text(
+                        state.paymentMethod == 'CASH' ? 'Tunai' : 'QRIS',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      avatar: const Icon(LucideIcons.wallet, size: 14),
+                      deleteIcon: const Icon(LucideIcons.x, size: 14),
+                      onDeleted: () {
+                        ref
+                            .read(transactionsProvider.notifier)
+                            .setFilters(
+                              startDate: state.startDate,
+                              endDate: state.endDate,
+                              status: state.status,
+                              paymentMethod: null,
+                            );
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      side: BorderSide(color: theme.dividerColor),
+                      backgroundColor: theme.cardColor,
+                    ),
+                  ),
+                TextButton(
+                  onPressed: () {
+                    ref.read(transactionsProvider.notifier).resetFilters();
+                  },
+                  child: const Text(
+                    'Reset Semua',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+
         const SizedBox(height: 24),
 
         // Content - table for desktop, cards for mobile with pull-to-refresh
@@ -316,10 +742,30 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                         ),
                         const SizedBox(width: 8),
                         AppBadge(
-                          text: 'Lunas',
-                          backgroundColor: AppColors.greenBg,
-                          textColor: AppColors.green,
-                          borderColor: AppColors.green.withValues(alpha: 0.3),
+                          text: trx.status == 'PAID'
+                              ? 'Lunas'
+                              : trx.status == 'CANCELLED'
+                              ? 'Batal'
+                              : 'Pending',
+                          backgroundColor: trx.status == 'PAID'
+                              ? AppColors.greenBg
+                              : trx.status == 'CANCELLED'
+                              ? AppColors.destructiveLight.withValues(
+                                  alpha: 0.1,
+                                )
+                              : AppColors.orange.withValues(alpha: 0.1),
+                          textColor: trx.status == 'PAID'
+                              ? AppColors.green
+                              : trx.status == 'CANCELLED'
+                              ? AppColors.destructiveLight
+                              : AppColors.orange,
+                          borderColor: trx.status == 'PAID'
+                              ? AppColors.green.withValues(alpha: 0.3)
+                              : trx.status == 'CANCELLED'
+                              ? AppColors.destructiveLight.withValues(
+                                  alpha: 0.3,
+                                )
+                              : AppColors.orange.withValues(alpha: 0.3),
                         ),
                       ],
                     ),
@@ -566,12 +1012,28 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                               child: AppBadge(
                                 text: trx.status == 'PAID'
                                     ? 'Lunas'
-                                    : trx.status,
-                                backgroundColor: AppColors.greenBg,
-                                textColor: AppColors.green,
-                                borderColor: AppColors.green.withValues(
-                                  alpha: 0.3,
-                                ),
+                                    : trx.status == 'CANCELLED'
+                                    ? 'Batal'
+                                    : 'Pending',
+                                backgroundColor: trx.status == 'PAID'
+                                    ? AppColors.greenBg
+                                    : trx.status == 'CANCELLED'
+                                    ? AppColors.destructiveLight.withValues(
+                                        alpha: 0.1,
+                                      )
+                                    : AppColors.orange.withValues(alpha: 0.1),
+                                textColor: trx.status == 'PAID'
+                                    ? AppColors.green
+                                    : trx.status == 'CANCELLED'
+                                    ? AppColors.destructiveLight
+                                    : AppColors.orange,
+                                borderColor: trx.status == 'PAID'
+                                    ? AppColors.green.withValues(alpha: 0.3)
+                                    : trx.status == 'CANCELLED'
+                                    ? AppColors.destructiveLight.withValues(
+                                        alpha: 0.3,
+                                      )
+                                    : AppColors.orange.withValues(alpha: 0.3),
                               ),
                             ),
                             SizedBox(
@@ -659,6 +1121,11 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
           Text(
             'Tidak ada transaksi ditemukan',
             style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Coba ubah filter pencarian Anda',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),

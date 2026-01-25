@@ -136,7 +136,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: 8),
                         AppInput(
                           controller: _emailController,
-                          placeholder: 'name@company.com',
+                          placeholder: 'admin@kasipro.com',
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: Icon(
                             LucideIcons.mail,

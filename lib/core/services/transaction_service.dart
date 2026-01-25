@@ -31,6 +31,7 @@ class TransactionService {
     DateTime? startDate,
     DateTime? endDate,
     String? status,
+    String? paymentMethod,
     int? limit,
     int? offset,
   }) async {
@@ -45,6 +46,9 @@ class TransactionService {
       }
       if (status != null) {
         queryParams['status'] = status;
+      }
+      if (paymentMethod != null) {
+        queryParams['paymentMethod'] = paymentMethod;
       }
       if (limit != null) {
         queryParams['limit'] = limit;
