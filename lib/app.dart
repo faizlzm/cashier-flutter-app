@@ -17,6 +17,8 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'providers/theme_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/business_settings_provider.dart';
 
 class CashierApp extends ConsumerWidget {
   const CashierApp({super.key});
@@ -40,6 +42,15 @@ class CashierApp extends ConsumerWidget {
 
     // Create router with auth awareness
     final router = createAppRouter(ref);
+
+    // Sync tax rate from settings
+    ref.listen(businessSettingsProvider, (previous, next) {
+      next.whenData((settings) {
+        if (settings != null) {
+          ref.read(cartProvider.notifier).setTaxRate(settings.taxRate);
+        }
+      });
+    });
 
     return MaterialApp.router(
       title: 'Kasir Pro',

@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cashier_flutter_app/data/models/product_model.dart';
 import 'package:cashier_flutter_app/data/models/cart_item_model.dart';
 
-final cartProvider =
-    StateNotifierProvider<CartNotifier, List<CartItem>>((ref) => CartNotifier());
+final cartProvider = StateNotifierProvider<CartNotifier, List<CartItem>>(
+  (ref) => CartNotifier(),
+);
 
 class CartNotifier extends StateNotifier<List<CartItem>> {
   CartNotifier() : super([]);
@@ -18,7 +19,7 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
                   product: state[i].product,
                   quantity: state[i].quantity + 1,
                 )
-              : state[i]
+              : state[i],
       ];
     } else {
       state = [...state, CartItem(product: product)];
@@ -37,14 +38,22 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
       for (final i in state)
         i.product.id == productId
             ? CartItem(product: i.product, quantity: qty)
-            : i
+            : i,
     ];
   }
 
   void clearCart() => state = [];
 
+  double _taxRate = 11.0;
+
+  void setTaxRate(double rate) {
+    _taxRate = rate;
+  }
+
+  double get currentTaxRate => _taxRate;
+
   int get subtotal => state.fold(0, (s, i) => s + i.subtotal);
-  int get tax => (subtotal * 0.11).round();
+  int get tax => (subtotal * (_taxRate / 100)).round();
   int get total => subtotal + tax;
   int get itemCount => state.fold(0, (s, i) => s + i.quantity);
 }

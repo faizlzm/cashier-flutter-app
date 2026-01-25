@@ -318,7 +318,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       const SizedBox(height: 4),
                       _row(
                         context,
-                        'Pajak (11%)',
+                        'Pajak (${cartNotifier.currentTaxRate}%)',
                         formatRupiah(cartNotifier.tax),
                       ),
                       const Divider(height: 16),
@@ -788,7 +788,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                             const SizedBox(height: 4),
                             _row(
                               context,
-                              'Pajak (11%)',
+                              'Pajak (${cartNotifier.currentTaxRate}%)',
                               formatRupiah(cartNotifier.tax),
                             ),
                             const Divider(height: 24),

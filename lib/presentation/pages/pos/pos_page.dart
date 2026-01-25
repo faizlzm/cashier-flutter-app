@@ -830,7 +830,11 @@ class _PosPageState extends ConsumerState<PosPage> {
         children: [
           _totalRow(context, 'Subtotal', formatRupiah(cartNotifier.subtotal)),
           const SizedBox(height: 4),
-          _totalRow(context, 'PPN (11%)', formatRupiah(cartNotifier.tax)),
+          _totalRow(
+            context,
+            'Pajak (${cartNotifier.currentTaxRate}%)',
+            formatRupiah(cartNotifier.tax),
+          ),
           const Divider(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
