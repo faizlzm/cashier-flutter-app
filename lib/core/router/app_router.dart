@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../presentation/layouts/main_layout.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
-import '../../presentation/pages/auth/forgot_password_page.dart';
+
 import '../../presentation/pages/dashboard/dashboard_page.dart';
 import '../../presentation/pages/pos/pos_page.dart';
 import '../../presentation/pages/pos/checkout_page.dart';
@@ -18,7 +18,7 @@ final _rootKey = GlobalKey<NavigatorState>();
 final _shellKey = GlobalKey<NavigatorState>();
 
 /// Auth paths that don't require authentication
-const _authPaths = ['/login', '/register', '/forgot-password'];
+const _authPaths = ['/login', '/register'];
 
 /// Create the app router with auth redirect support
 GoRouter createAppRouter(WidgetRef ref) {
@@ -54,10 +54,6 @@ GoRouter createAppRouter(WidgetRef ref) {
       // Auth routes (without sidebar)
       GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
-      GoRoute(
-        path: '/forgot-password',
-        builder: (_, __) => const ForgotPasswordPage(),
-      ),
 
       // Main routes (with sidebar)
       ShellRoute(

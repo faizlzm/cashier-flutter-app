@@ -196,19 +196,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       fullWidth: true,
                       size: BtnSize.lg,
                     ),
-                    const SizedBox(height: 24),
-                    TextButton(
-                      onPressed: isLoading
-                          ? null
-                          : () => context.go('/forgot-password'),
-                      child: Text(
-                        'Lupa Password?',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: cs.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -245,8 +232,4 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ),
     );
   }
-
-
-
-
 }
