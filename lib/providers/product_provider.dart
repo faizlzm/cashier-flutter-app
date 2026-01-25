@@ -204,6 +204,7 @@ class ProductManagementState {
   final String? successMessage;
   final String? selectedCategory;
   final String? searchQuery;
+  final bool? isActiveFilter; // null = All, true = Active, false = Inactive
 
   const ProductManagementState({
     this.products = const [],
@@ -213,6 +214,7 @@ class ProductManagementState {
     this.successMessage,
     this.selectedCategory,
     this.searchQuery,
+    this.isActiveFilter,
   });
 
   ProductManagementState copyWith({
@@ -223,8 +225,10 @@ class ProductManagementState {
     String? successMessage,
     String? selectedCategory,
     String? searchQuery,
+    bool? isActiveFilter,
     bool clearError = false,
     bool clearSuccess = false,
+    bool clearIsActiveFilter = false,
   }) {
     return ProductManagementState(
       products: products ?? this.products,
@@ -236,15 +240,22 @@ class ProductManagementState {
           : (successMessage ?? this.successMessage),
       selectedCategory: selectedCategory ?? this.selectedCategory,
       searchQuery: searchQuery ?? this.searchQuery,
+      isActiveFilter: clearIsActiveFilter
+          ? null
+          : (isActiveFilter ?? this.isActiveFilter),
     );
   }
 
-  /// Get products filtered by current category and search
+  /// Get products filtered by current category, search, and status
   List<Product> get filteredProducts {
     var filtered = products;
 
     if (selectedCategory != null && selectedCategory != 'ALL') {
       filtered = filtered.where((p) => p.category == selectedCategory).toList();
+    }
+
+    if (isActiveFilter != null) {
+      filtered = filtered.where((p) => p.isActive == isActiveFilter).toList();
     }
 
     if (searchQuery != null && searchQuery!.isNotEmpty) {
@@ -407,6 +418,14 @@ class ProductManagementNotifier extends StateNotifier<ProductManagementState> {
   /// Set category filter
   void setCategory(String? category) {
     state = state.copyWith(selectedCategory: category);
+  }
+
+  /// Set active status filter
+  void setIsActiveFilter(bool? isActive) {
+    state = state.copyWith(
+      isActiveFilter: isActive,
+      clearIsActiveFilter: isActive == null,
+    );
   }
 
   /// Set search query

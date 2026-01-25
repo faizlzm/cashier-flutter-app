@@ -135,6 +135,149 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
         .toggleProductActive(product.id, isActive: !product.isActive);
   }
 
+  void _showFilterBottomSheet() {
+    final notifier = ref.read(productManagementProvider.notifier);
+    final state = ref.read(productManagementProvider);
+
+    // Temporary state variables
+    String? tempCategory = state.selectedCategory;
+    bool? tempIsActive = state.isActiveFilter;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filter Produk',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            tempCategory = null; // 'ALL' effectively
+                            tempIsActive = null;
+                          });
+                        },
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Category Section
+                  Text(
+                    'Kategori',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildFilterChip(
+                        label: 'Semua',
+                        isSelected:
+                            tempCategory == null || tempCategory == 'ALL',
+                        onSelected: (_) => setState(() => tempCategory = 'ALL'),
+                      ),
+                      _buildFilterChip(
+                        label: 'Makanan',
+                        isSelected: tempCategory == 'FOOD',
+                        onSelected: (_) =>
+                            setState(() => tempCategory = 'FOOD'),
+                      ),
+                      _buildFilterChip(
+                        label: 'Minuman',
+                        isSelected: tempCategory == 'DRINK',
+                        onSelected: (_) =>
+                            setState(() => tempCategory = 'DRINK'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Status Section
+                  Text(
+                    'Status',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildFilterChip(
+                        label: 'Semua',
+                        isSelected: tempIsActive == null,
+                        onSelected: (_) => setState(() => tempIsActive = null),
+                      ),
+                      _buildFilterChip(
+                        label: 'Aktif',
+                        isSelected: tempIsActive == true,
+                        onSelected: (_) => setState(() => tempIsActive = true),
+                      ),
+                      _buildFilterChip(
+                        label: 'Nonaktif',
+                        isSelected: tempIsActive == false,
+                        onSelected: (_) => setState(() => tempIsActive = false),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Apply Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () {
+                        notifier.setCategory(tempCategory);
+                        notifier.setIsActiveFilter(tempIsActive);
+                        Navigator.pop(context);
+                      },
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Terapkan Filter'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -203,60 +346,188 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     );
   }
 
+  Widget _buildFilterChip({
+    required String label,
+    required bool isSelected,
+    required Function(bool) onSelected,
+  }) {
+    final theme = Theme.of(context);
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: onSelected,
+      backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(
+        alpha: 0.3,
+      ),
+      selectedColor: theme.colorScheme.primaryContainer,
+      labelStyle: TextStyle(
+        color: isSelected
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onSurface,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.5)
+              : Colors.transparent,
+        ),
+      ),
+      showCheckmark: false,
+    );
+  }
+
   Widget _buildSearchFilter(
     ColorScheme cs,
     ProductManagementNotifier notifier,
     ProductManagementState state,
     bool isMobile,
   ) {
-    return Column(
-      children: [
-        // Search
-        AppInput(
-          placeholder: 'Cari produk...',
-          prefixIcon: Icon(
-            LucideIcons.search,
-            size: 18,
-            color: cs.onSurface.withValues(alpha: 0.4),
-          ),
-          onChanged: notifier.setSearchQuery,
-        ),
-        const SizedBox(height: 12),
+    // Check active filters
+    final bool isCategoryActive =
+        state.selectedCategory != null && state.selectedCategory != 'ALL';
+    final bool isStatusActive = state.isActiveFilter != null;
+    final bool isFilterActive = isCategoryActive || isStatusActive;
 
-        // Category Filter - Left aligned
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Search & Filter Button Row
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            AppButton(
-              text: 'Semua',
-              variant:
-                  (state.selectedCategory == null ||
-                      state.selectedCategory == 'ALL')
-                  ? BtnVariant.primary
-                  : BtnVariant.outline,
-              size: BtnSize.sm,
-              onPressed: () => notifier.setCategory('ALL'),
+            Expanded(
+              child: AppInput(
+                placeholder: 'Cari produk...',
+                prefixIcon: Icon(
+                  LucideIcons.search,
+                  size: 18,
+                  color: cs.onSurface.withValues(alpha: 0.4),
+                ),
+                onChanged: notifier.setSearchQuery,
+              ),
             ),
             const SizedBox(width: 8),
-            AppButton(
-              text: 'Makanan',
-              variant: state.selectedCategory == 'FOOD'
-                  ? BtnVariant.primary
-                  : BtnVariant.outline,
-              size: BtnSize.sm,
-              onPressed: () => notifier.setCategory('FOOD'),
-            ),
-            const SizedBox(width: 8),
-            AppButton(
-              text: 'Minuman',
-              variant: state.selectedCategory == 'DRINK'
-                  ? BtnVariant.primary
-                  : BtnVariant.outline,
-              size: BtnSize.sm,
-              onPressed: () => notifier.setCategory('DRINK'),
+            IconButton(
+              onPressed: _showFilterBottomSheet,
+              icon: Stack(
+                children: [
+                  Icon(
+                    LucideIcons.slidersHorizontal,
+                    color: isFilterActive ? cs.primary : cs.onSurface,
+                  ),
+                  if (isFilterActive)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: cs.error,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: cs.surface, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: isFilterActive
+                    ? cs.primaryContainer.withValues(alpha: 0.5)
+                    : cs.surfaceContainerHighest.withValues(alpha: 0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(12),
+              ),
             ),
           ],
         ),
+
+        // Active Filter Chips
+        if (isFilterActive) ...[
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                if (isCategoryActive)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InputChip(
+                      label: Text(
+                        state.selectedCategory == 'FOOD'
+                            ? 'Makanan'
+                            : state.selectedCategory == 'DRINK'
+                            ? 'Minuman'
+                            : state.selectedCategory!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: cs.onSecondaryContainer,
+                        ),
+                      ),
+                      backgroundColor: cs.secondaryContainer,
+                      onDeleted: () => notifier.setCategory(null),
+                      deleteIcon: Icon(
+                        LucideIcons.x,
+                        size: 14,
+                        color: cs.onSecondaryContainer,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(0),
+                      visualDensity: VisualDensity.compact,
+                      side: BorderSide.none,
+                    ),
+                  ),
+                if (isStatusActive)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InputChip(
+                      label: Text(
+                        state.isActiveFilter == true ? 'Aktif' : 'Nonaktif',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: cs.onTertiaryContainer,
+                        ),
+                      ),
+                      backgroundColor: cs.tertiaryContainer,
+                      onDeleted: () => notifier.setIsActiveFilter(null),
+                      deleteIcon: Icon(
+                        LucideIcons.x,
+                        size: 14,
+                        color: cs.onTertiaryContainer,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(0),
+                      visualDensity: VisualDensity.compact,
+                      side: BorderSide.none,
+                    ),
+                  ),
+
+                TextButton(
+                  onPressed: () {
+                    notifier.setCategory(null);
+                    notifier.setIsActiveFilter(null);
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    minimumSize: const Size(0, 32),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Reset Semua',
+                    style: TextStyle(fontSize: 12, color: cs.error),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
