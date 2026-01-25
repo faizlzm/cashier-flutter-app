@@ -190,3 +190,250 @@ final isProductsLoadingProvider = Provider<bool>((ref) {
   final state = ref.watch(productsProvider);
   return state.isLoading || state.isRefreshing;
 });
+
+// ============================================================================
+// PRODUCT MANAGEMENT (Admin CRUD)
+// ============================================================================
+
+/// State for product management (Admin)
+class ProductManagementState {
+  final List<Product> products;
+  final bool isLoading;
+  final bool isSubmitting;
+  final String? error;
+  final String? successMessage;
+  final String? selectedCategory;
+  final String? searchQuery;
+
+  const ProductManagementState({
+    this.products = const [],
+    this.isLoading = false,
+    this.isSubmitting = false,
+    this.error,
+    this.successMessage,
+    this.selectedCategory,
+    this.searchQuery,
+  });
+
+  ProductManagementState copyWith({
+    List<Product>? products,
+    bool? isLoading,
+    bool? isSubmitting,
+    String? error,
+    String? successMessage,
+    String? selectedCategory,
+    String? searchQuery,
+    bool clearError = false,
+    bool clearSuccess = false,
+  }) {
+    return ProductManagementState(
+      products: products ?? this.products,
+      isLoading: isLoading ?? this.isLoading,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      error: clearError ? null : (error ?? this.error),
+      successMessage: clearSuccess
+          ? null
+          : (successMessage ?? this.successMessage),
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+      searchQuery: searchQuery ?? this.searchQuery,
+    );
+  }
+
+  /// Get products filtered by current category and search
+  List<Product> get filteredProducts {
+    var filtered = products;
+
+    if (selectedCategory != null && selectedCategory != 'ALL') {
+      filtered = filtered.where((p) => p.category == selectedCategory).toList();
+    }
+
+    if (searchQuery != null && searchQuery!.isNotEmpty) {
+      final query = searchQuery!.toLowerCase();
+      filtered = filtered
+          .where((p) => p.name.toLowerCase().contains(query))
+          .toList();
+    }
+
+    return filtered..sort((a, b) => a.name.compareTo(b.name));
+  }
+}
+
+/// Product Management Notifier for Admin CRUD operations
+class ProductManagementNotifier extends StateNotifier<ProductManagementState> {
+  final ProductService _productService;
+
+  ProductManagementNotifier({ProductService? productService})
+    : _productService = productService ?? ProductService(),
+      super(const ProductManagementState());
+
+  /// Load all products (including inactive)
+  Future<void> loadProducts() async {
+    state = state.copyWith(isLoading: true, clearError: true);
+
+    try {
+      final products = await _productService.getProducts();
+      state = state.copyWith(products: products, isLoading: false);
+    } on ApiException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Gagal memuat data produk.',
+      );
+    }
+  }
+
+  /// Create a new product
+  Future<bool> createProduct({
+    required String name,
+    required int price,
+    required String category,
+    int stock = 0,
+    int minStock = 5,
+    String? imageUrl,
+  }) async {
+    state = state.copyWith(
+      isSubmitting: true,
+      clearError: true,
+      clearSuccess: true,
+    );
+
+    try {
+      await _productService.createProduct(
+        name: name,
+        price: price,
+        category: category,
+        stock: stock,
+        minStock: minStock,
+        imageUrl: imageUrl,
+      );
+      await loadProducts();
+      state = state.copyWith(
+        isSubmitting: false,
+        successMessage: 'Produk berhasil ditambahkan',
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(isSubmitting: false, error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        isSubmitting: false,
+        error: 'Gagal menambah produk.',
+      );
+      return false;
+    }
+  }
+
+  /// Update an existing product
+  Future<bool> updateProduct(
+    String id, {
+    String? name,
+    int? price,
+    String? category,
+    int? stock,
+    int? minStock,
+    String? imageUrl,
+    bool? isActive,
+  }) async {
+    state = state.copyWith(
+      isSubmitting: true,
+      clearError: true,
+      clearSuccess: true,
+    );
+
+    try {
+      await _productService.updateProduct(
+        id,
+        name: name,
+        price: price,
+        category: category,
+        stock: stock,
+        minStock: minStock,
+        imageUrl: imageUrl,
+        isActive: isActive,
+      );
+      await loadProducts();
+      state = state.copyWith(
+        isSubmitting: false,
+        successMessage: 'Produk berhasil diperbarui',
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(isSubmitting: false, error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        isSubmitting: false,
+        error: 'Gagal memperbarui produk.',
+      );
+      return false;
+    }
+  }
+
+  /// Delete a product
+  Future<bool> deleteProduct(String id) async {
+    state = state.copyWith(
+      isSubmitting: true,
+      clearError: true,
+      clearSuccess: true,
+    );
+
+    try {
+      await _productService.deleteProduct(id);
+      await loadProducts();
+      state = state.copyWith(
+        isSubmitting: false,
+        successMessage: 'Produk berhasil dihapus',
+      );
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(isSubmitting: false, error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        isSubmitting: false,
+        error: 'Gagal menghapus produk.',
+      );
+      return false;
+    }
+  }
+
+  /// Toggle product active status
+  Future<bool> toggleProductActive(String id, {required bool isActive}) async {
+    return updateProduct(id, isActive: isActive);
+  }
+
+  /// Set category filter
+  void setCategory(String? category) {
+    state = state.copyWith(selectedCategory: category);
+  }
+
+  /// Set search query
+  void setSearchQuery(String? query) {
+    state = state.copyWith(searchQuery: query);
+  }
+
+  /// Clear error
+  void clearError() {
+    state = state.copyWith(clearError: true);
+  }
+
+  /// Clear success message
+  void clearSuccess() {
+    state = state.copyWith(clearSuccess: true);
+  }
+}
+
+/// Global product management provider (Admin)
+final productManagementProvider =
+    StateNotifierProvider<ProductManagementNotifier, ProductManagementState>((
+      ref,
+    ) {
+      return ProductManagementNotifier();
+    });
+
+/// Convenience provider for filtered products in management
+final filteredManagementProductsProvider = Provider<List<Product>>((ref) {
+  return ref.watch(productManagementProvider).filteredProducts;
+});

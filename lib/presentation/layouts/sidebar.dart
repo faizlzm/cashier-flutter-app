@@ -37,6 +37,7 @@ class _SidebarState extends ConsumerState<Sidebar> {
         'label': 'Riwayat',
         'path': '/transactions',
       },
+      {'icon': LucideIcons.package, 'label': 'Produk', 'path': '/products'},
       {'icon': LucideIcons.settings, 'label': 'Setting', 'path': '/settings'},
     ];
 

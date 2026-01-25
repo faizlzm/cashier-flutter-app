@@ -10,6 +10,7 @@ import '../../presentation/pages/pos/pos_page.dart';
 import '../../presentation/pages/pos/checkout_page.dart';
 import '../../presentation/pages/pos/success_page.dart';
 import '../../presentation/pages/transactions/transactions_page.dart';
+import '../../presentation/pages/products/products_page.dart';
 import '../../presentation/pages/settings/settings_page.dart';
 import '../../providers/auth_provider.dart';
 
@@ -89,6 +90,7 @@ GoRouter createAppRouter(WidgetRef ref) {
             path: '/transactions',
             builder: (_, __) => const TransactionsPage(),
           ),
+          GoRoute(path: '/products', builder: (_, __) => const ProductsPage()),
           GoRoute(path: '/settings', builder: (_, __) => const SettingsPage()),
         ],
       ),

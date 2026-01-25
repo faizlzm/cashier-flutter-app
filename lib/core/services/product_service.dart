@@ -72,4 +72,76 @@ class ProductService {
       throw e.apiException;
     }
   }
+
+  /// Create a new product
+  Future<Product> createProduct({
+    required String name,
+    required int price,
+    required String category,
+    int stock = 0,
+    int minStock = 5,
+    String? imageUrl,
+  }) async {
+    try {
+      final response = await _apiClient.post(
+        '/products',
+        data: {
+          'name': name,
+          'price': price,
+          'category': category,
+          'stock': stock,
+          'minStock': minStock,
+          if (imageUrl != null && imageUrl.isNotEmpty) 'imageUrl': imageUrl,
+        },
+      );
+      return Product.fromJson(response.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw e.apiException;
+    }
+  }
+
+  /// Update an existing product
+  Future<Product> updateProduct(
+    String id, {
+    String? name,
+    int? price,
+    String? category,
+    int? stock,
+    int? minStock,
+    String? imageUrl,
+    bool? isActive,
+  }) async {
+    try {
+      final data = <String, dynamic>{};
+      if (name != null) data['name'] = name;
+      if (price != null) data['price'] = price;
+      if (category != null) data['category'] = category;
+      if (stock != null) data['stock'] = stock;
+      if (minStock != null) data['minStock'] = minStock;
+      if (imageUrl != null) data['imageUrl'] = imageUrl;
+      if (isActive != null) data['isActive'] = isActive;
+
+      final response = await _apiClient.put('/products/$id', data: data);
+      return Product.fromJson(response.data['data'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw e.apiException;
+    }
+  }
+
+  /// Delete a product
+  Future<void> deleteProduct(String id) async {
+    try {
+      await _apiClient.delete('/products/$id');
+    } on DioException catch (e) {
+      throw e.apiException;
+    }
+  }
+
+  /// Toggle product active status
+  Future<Product> toggleProductActive(
+    String id, {
+    required bool isActive,
+  }) async {
+    return updateProduct(id, isActive: isActive);
+  }
 }
