@@ -123,13 +123,6 @@ class _TransactionsPageState extends ConsumerState<TransactionsPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Pantau semua pemasukan dan detail transaksi toko Anda',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: cs.onSurface.withValues(alpha: 0.6),
-                          ),
-                        ),
                       ],
                     ),
                   ),

@@ -154,13 +154,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Ringkasan aktivitas bisnis Anda hari ini',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: cs.onSurface.withValues(alpha: 0.6),
-                          ),
-                        ),
                       ],
                     ),
                     Container(
