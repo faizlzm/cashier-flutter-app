@@ -205,7 +205,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                       setState(() {
                                         _isEditing = false;
                                         // Reset fields will happen via provider listener or re-render
-                                        ref.refresh(businessSettingsProvider);
+                                        ref.invalidate(
+                                          businessSettingsProvider,
+                                        );
                                       });
                                     },
                                   ),
@@ -231,34 +233,32 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                                     .notifier,
                                               )
                                               .updateSettings(newSettings);
-                                          if (mounted) {
-                                            setState(() {
-                                              _isEditing = false;
-                                            });
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Pengaturan berhasil disimpan',
-                                                ),
-                                                backgroundColor: Colors.green,
+                                          if (!mounted) return;
+                                          setState(() {
+                                            _isEditing = false;
+                                          });
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Pengaturan berhasil disimpan',
                                               ),
-                                            );
-                                          }
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
                                         } catch (e) {
-                                          if (mounted) {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Gagal menyimpan: $e',
-                                                ),
-                                                backgroundColor: Colors.red,
+                                          if (!mounted) return;
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Gagal menyimpan: $e',
                                               ),
-                                            );
-                                          }
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
                                         }
                                       }
                                     },
