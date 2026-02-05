@@ -141,7 +141,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           prefixIcon: Icon(
                             LucideIcons.mail,
                             size: 18,
-                            color: const Color(0xFF94A3B8),
+                            color: const Color.fromARGB(255, 180, 180, 180),
                           ),
                           enabled: !isLoading,
                         ),
@@ -162,12 +162,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: 8),
                         AppInput(
                           controller: _passwordController,
-                          placeholder: '••••••••',
+                          placeholder: '•••••••',
                           obscureText: !_isPasswordVisible,
                           prefixIcon: Icon(
                             LucideIcons.lock,
                             size: 18,
-                            color: const Color(0xFF94A3B8),
+                            color: const Color.fromARGB(255, 180, 180, 180),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
