@@ -587,6 +587,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
+                          key: const Key('checkout_pay_button'),
                           onPressed: (!isSufficient || isProcessing)
                               ? null
                               : _handlePayment,
@@ -1101,6 +1102,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
+                          key: const Key('checkout_pay_button'),
                           onPressed: (!isSufficient || isProcessing)
                               ? null
                               : _handlePayment,
@@ -1161,6 +1163,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     final cs = Theme.of(context).colorScheme;
     final isActive = _paymentMethod == method;
     return GestureDetector(
+      key: Key('checkout_payment_${method.toLowerCase()}'),
       onTap: () => setState(() => _paymentMethod = method),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1204,6 +1207,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     final cs = Theme.of(context).colorScheme;
     final isBackspace = value == 'backspace';
     return Material(
+      key: Key('checkout_numpad_$value'),
       color: isBackspace
           ? Colors.red.withValues(alpha: 0.1)
           : Theme.of(context).cardColor,

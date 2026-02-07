@@ -135,6 +135,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         AppInput(
+                          key: const Key('login_email_input'),
                           controller: _emailController,
                           placeholder: 'admin@kasipro.com',
                           keyboardType: TextInputType.emailAddress,
@@ -161,6 +162,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 8),
                         AppInput(
+                          key: const Key('login_password_input'),
                           controller: _passwordController,
                           placeholder: '•••••••',
                           obscureText: !_isPasswordVisible,
@@ -190,6 +192,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 24),
                     AppButton(
+                      key: const Key('login_submit_button'),
                       text: 'Masuk',
                       onPressed: isLoading ? null : _handleLogin,
                       isLoading: isLoading,

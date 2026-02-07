@@ -110,6 +110,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       SizedBox(
                         width: 200,
                         child: AppInput(
+                          key: const Key('pos_search_input'),
                           placeholder: 'Cari produk...',
                           prefixIcon: Icon(
                             LucideIcons.search,
@@ -121,6 +122,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       ),
                       const SizedBox(width: 8),
                       AppButton(
+                        key: const Key('pos_category_all'),
                         text: 'Semua',
                         variant: _category == 'ALL'
                             ? BtnVariant.primary
@@ -130,6 +132,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       ),
                       const SizedBox(width: 8),
                       AppButton(
+                        key: const Key('pos_category_food'),
                         text: 'Makanan',
                         variant: _category == 'FOOD'
                             ? BtnVariant.primary
@@ -139,6 +142,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                       ),
                       const SizedBox(width: 8),
                       AppButton(
+                        key: const Key('pos_category_drink'),
                         text: 'Minuman',
                         variant: _category == 'DRINK'
                             ? BtnVariant.primary
@@ -166,6 +170,7 @@ class _PosPageState extends ConsumerState<PosPage> {
             right: 0,
             child: Center(
               child: GestureDetector(
+                key: const Key('pos_cart_button'),
                 onTap: () => setState(() => _showCart = true),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -235,6 +240,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                 children: [
                   Expanded(
                     child: AppInput(
+                      key: const Key('pos_search_input'),
                       placeholder: 'Cari produk...',
                       prefixIcon: Icon(
                         LucideIcons.search,
@@ -246,6 +252,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                   ),
                   const SizedBox(width: 16),
                   AppButton(
+                    key: const Key('pos_category_all'),
                     text: 'Semua',
                     variant: _category == 'ALL'
                         ? BtnVariant.primary
@@ -254,6 +261,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                   ),
                   const SizedBox(width: 8),
                   AppButton(
+                    key: const Key('pos_category_food'),
                     text: 'Makanan',
                     variant: _category == 'FOOD'
                         ? BtnVariant.primary
@@ -262,6 +270,7 @@ class _PosPageState extends ConsumerState<PosPage> {
                   ),
                   const SizedBox(width: 8),
                   AppButton(
+                    key: const Key('pos_category_drink'),
                     text: 'Minuman',
                     variant: _category == 'DRINK'
                         ? BtnVariant.primary
@@ -381,6 +390,7 @@ class _PosPageState extends ConsumerState<PosPage> {
     final isOutOfStock = p.isOutOfStock;
 
     return Container(
+      key: Key('pos_product_${p.id}'),
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -858,6 +868,7 @@ class _PosPageState extends ConsumerState<PosPage> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
+              key: const Key('pos_checkout_button'),
               onPressed: cart.isEmpty
                   ? null
                   : () {
